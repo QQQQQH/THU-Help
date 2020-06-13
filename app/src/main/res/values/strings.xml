@@ -28,4 +28,7 @@
     <string name="toast_publish_time_error">结束时间必须晚于开始时间</string>
     <string name="address">地点</string>
     <string name="deal_address">任务地点</string>
+    <string name="sharedPreFile_login">login</string>
+    <string name="login_success">Login successed.</string>
+    <string name="register_success">Register successed.</string>
 </resources>

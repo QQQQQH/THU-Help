@@ -76,7 +76,6 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 final String resStr = response.body().string();
-//                RegisterActivity.this.runOnUiThread(() -> Toast.makeText(RegisterActivity.this, resStr, Toast.LENGTH_LONG).show());
                 Log.e("response", resStr);
                 try {
                     JSONObject jsonObject = new JSONObject(resStr);

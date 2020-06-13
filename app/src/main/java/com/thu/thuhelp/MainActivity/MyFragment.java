@@ -1,6 +1,9 @@
 package com.thu.thuhelp.MainActivity;
 
+import android.app.Application;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -13,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.thu.thuhelp.App;
 import com.thu.thuhelp.R;
 import com.thu.thuhelp.EnterActivity.LoginActivity;
 import com.thu.thuhelp.EnterActivity.RegisterActivity;
@@ -65,10 +69,9 @@ public class MyFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == AppCompatActivity.RESULT_OK) {
             if (requestCode == REQUEST_LOGIN) {
-                Toast.makeText(getActivity(), "Login successed.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), R.string.login_success, Toast.LENGTH_SHORT).show();
             } else if (requestCode == REQUEST_REGISTER) {
-                Toast.makeText(getActivity(), "Register successed.", Toast.LENGTH_SHORT).show();
-
+                Toast.makeText(getActivity(), R.string.register_success, Toast.LENGTH_SHORT).show();
             }
         }
 
