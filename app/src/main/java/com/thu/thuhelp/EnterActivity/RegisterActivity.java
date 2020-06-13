@@ -1,10 +1,12 @@
-package com.thu.thuhelp.enterActivity;
+package com.thu.thuhelp.EnterActivity;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioButton;
@@ -38,6 +40,21 @@ public class RegisterActivity extends AppCompatActivity {
         editTextPassword = findViewById(R.id.editTextPassword);
         editTextNickname = findViewById(R.id.editTextNickname);
         radioButtonMale = findViewById(R.id.radioButtonMale);
+
+        // set return actionBar
+        ActionBar actionBar = getSupportActionBar();
+        assert actionBar != null;
+        actionBar.setDisplayHomeAsUpEnabled(true);
+    }
+
+    // set return actionBar
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            this.finish();
+            return false;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     public void onRegistClick(View view) {

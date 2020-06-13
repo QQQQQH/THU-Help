@@ -1,4 +1,4 @@
-package com.thu.thuhelp.mainActivity;
+package com.thu.thuhelp.MainActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,8 +14,8 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.thu.thuhelp.R;
-import com.thu.thuhelp.enterActivity.LoginActivity;
-import com.thu.thuhelp.enterActivity.RegisterActivity;
+import com.thu.thuhelp.EnterActivity.LoginActivity;
+import com.thu.thuhelp.EnterActivity.RegisterActivity;
 
 
 /**

@@ -2,11 +2,30 @@
     <string name="app_name">THU Help</string>
     <string name="main_page">主页</string>
     <string name="my_page">我的</string>
-    <string name="reigster">注册</string>
+    <string name="register">注册</string>
     <string name="login">登录</string>
     <string name="student_id">学号</string>
     <string name="password">密码</string>
     <string name="nickname">昵称</string>
     <string name="male">男</string>
     <string name="female">女</string>
+    <string name="publish_deal">发布任务</string>
+    <string name="title">标题</string>
+    <string name="description">描述</string>
+    <string name="bonus">奖励</string>
+    <string name="start_time">开始时间</string>
+    <string name="end_time">结束时间</string>
+    <string name="deal_description">任务描述</string>
+    <string name="deal_title">任务标题</string>
+    <string name="deal_bonus">任务奖励</string>
+    <string name="button_start_time">选择开始时间</string>
+    <string name="button_end_time">选择结束时间</string>
+    <string name="submit">提交</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="toast_fill_publish_message">请填写完整信息</string>
+    <string name="toast_publish_time_error">结束时间必须晚于开始时间</string>
+    <string name="address">地点</string>
+    <string name="deal_address">任务地点</string>
 </resources>

@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".mainActivity.MyFragment">
+    tools:context=".MainActivity.MyFragment">
 
     <Button
         android:id="@+id/buttonLogin"
@@ -24,7 +24,7 @@
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="24dp"
-        android:text="@string/reigster" />
+        android:text="@string/register" />
 
 
 </RelativeLayout>

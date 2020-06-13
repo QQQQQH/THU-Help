@@ -1,4 +1,4 @@
-package com.thu.thuhelp.mainActivity;
+package com.thu.thuhelp.MainActivity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;

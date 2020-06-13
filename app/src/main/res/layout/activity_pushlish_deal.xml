@@ -1,9 +1,175 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".DealActivity.PushlishDealActivity">
+    android:layout_height="match_parent">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:context=".DealActivity.PushlishDealActivity">
+
+        <TextView
+            android:id="@+id/textViewTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="64dp"
+            android:text="@string/title"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/editTextTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="64dp"
+            android:autofillHints="@string/deal_title"
+            android:ems="10"
+            android:hint="@string/deal_title"
+            android:inputType="textPersonName"
+            app:layout_constraintBaseline_toBaselineOf="@+id/textViewTitle"
+            app:layout_constraintStart_toEndOf="@+id/textViewTitle" />
+
+        <TextView
+            android:id="@+id/textViewDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="32dp"
+            android:text="@string/description"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewTitle" />
+
+        <EditText
+            android:id="@+id/editTextDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="64dp"
+            android:autofillHints="@string/deal_description"
+            android:ems="10"
+            android:hint="@string/deal_description"
+            android:inputType="textMultiLine"
+            app:layout_constraintBaseline_toBaselineOf="@+id/textViewDescription"
+            app:layout_constraintStart_toEndOf="@+id/textViewDescription" />
+
+        <TextView
+            android:id="@+id/textViewAddress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="32dp"
+            android:text="@string/address"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/editTextDescription" />
+
+        <EditText
+            android:id="@+id/editTextAddress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="64dp"
+            android:autofillHints="@string/deal_address"
+            android:ems="10"
+            android:hint="@string/deal_address"
+            android:inputType="textPersonName"
+            app:layout_constraintBaseline_toBaselineOf="@+id/textViewAddress"
+            app:layout_constraintStart_toEndOf="@+id/textViewAddress" />
+
+        <TextView
+            android:id="@+id/textViewBonus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="32dp"
+            android:text="@string/bonus"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewAddress" />
+
+        <EditText
+            android:id="@+id/editTextBonus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="64dp"
+            android:autofillHints="0"
+            android:ems="10"
+            android:hint="@string/deal_bonus"
+            android:inputType="number"
+            app:layout_constraintBaseline_toBaselineOf="@+id/textViewBonus"
+            app:layout_constraintStart_toEndOf="@+id/textViewBonus" />
+
+        <TextView
+            android:id="@+id/textViewStartTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="64dp"
+            android:text="@string/start_time"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewBonus" />
+
+        <Button
+            android:id="@+id/buttonStartTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:onClick="onStartTimeClick"
+            android:text="@string/button_start_time"
+            app:layout_constraintBaseline_toBaselineOf="@+id/textViewStartTime"
+            app:layout_constraintStart_toEndOf="@+id/textViewStartTime" />
+
+
+        <TextView
+            android:id="@+id/textViewShowStartTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            app:layout_constraintBaseline_toBaselineOf="@+id/textViewStartTime"
+            app:layout_constraintStart_toEndOf="@+id/buttonStartTime" />
+
+        <TextView
+            android:id="@+id/textViewEndTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="32dp"
+            android:text="@string/end_time"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewStartTime" />
+
+
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:onClick="onEndTimeClick"
+            android:text="@string/button_end_time"
+            app:layout_constraintBaseline_toBaselineOf="@+id/textViewEndTime"
+            app:layout_constraintStart_toEndOf="@+id/textViewEndTime" />
+
+        <TextView
+            android:id="@+id/textViewShowEndTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            app:layout_constraintBaseline_toBaselineOf="@+id/textViewEndTime"
+            app:layout_constraintStart_toEndOf="@+id/button2" />
+
+
+        <Button
+            android:id="@+id/buttonSubmit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="64dp"
+            android:onClick="onSubmitClick"
+            android:text="@string/submit"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/button2" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

@@ -12,9 +12,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".enterActivity.RegisterActivity"></activity>
-        <activity android:name=".enterActivity.LoginActivity" />
-        <activity android:name=".mainActivity.MainActivity">
+        <activity
+            android:name=".DealActivity.PushlishDealActivity"
+            android:label="@string/publish_deal" />
+        <activity
+            android:name=".EnterActivity.RegisterActivity"
+            android:label="@string/register" />
+        <activity
+            android:name=".EnterActivity.LoginActivity"
+            android:label="@string/login" />
+        <activity android:name=".MainActivity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
