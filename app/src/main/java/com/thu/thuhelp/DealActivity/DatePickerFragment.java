@@ -32,7 +32,7 @@ public class DatePickerFragment extends DialogFragment
 
     @Override
     public void onDateSet(DatePicker view, int year, int month, int day) {
-        PushlishDealActivity activity = (PushlishDealActivity) getActivity();
+        PublishDealActivity activity = (PublishDealActivity) getActivity();
         assert activity != null;
         activity.setDatePickerRes(year, month, day);
     }

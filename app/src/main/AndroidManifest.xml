@@ -13,7 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".DealActivity.PushlishDealActivity"
+            android:name=".DealActivity.PublishDealActivity"
             android:label="@string/publish_deal" />
         <activity
             android:name=".EnterActivity.RegisterActivity"

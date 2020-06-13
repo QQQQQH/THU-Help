@@ -8,13 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.TimePicker;
-
-import com.thu.thuhelp.R;
 
 import java.util.Calendar;
 
@@ -37,7 +31,7 @@ public class TimePickerFragment extends DialogFragment
 
     @Override
     public void onTimeSet(TimePicker view, int hour, int minute) {
-        PushlishDealActivity activity = (PushlishDealActivity) getActivity();
+        PublishDealActivity activity = (PublishDealActivity) getActivity();
         assert activity != null;
         activity.setTimePickerRes(hour, minute);
     }

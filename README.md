@@ -1,9 +1,11 @@
 ## 主要代码结构
 
-- `mainActivity`包：主页面，包含两个`Fragment`：`MainFragment`（主页）和`MyFragment`（“我的”页面）
+- `MainActivity`包：主页面，包含两个`Fragment`：`MainFragment`（主页）和`MyFragment`（“我的”页面）
   - `MainFragment`：包含一个`RecyclerView`，用来显示任务列表
     - ` missionlist_item.xml`：`RecyclerView`中单个任务的模板布局
-- `enterActivity`包：`LoginActivity`（登录页面）和`RegisterActivity`（注册页面）
+- `EnterActivity`包：`LoginActivity`（登录页面）和`RegisterActivity`（注册页面）
+- `DealActivity`包：任务相关页面
+  - `PublishDealActivity`:任务发布页面
 
 
 ## TO-DO

@@ -13,9 +13,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
-import com.thu.thuhelp.DealActivity.PushlishDealActivity;
+import com.thu.thuhelp.DealActivity.PublishDealActivity;
 import com.thu.thuhelp.R;
 
 import java.util.LinkedList;
@@ -52,7 +51,7 @@ public class MainFragment extends Fragment {
             @Override
             public void onClick(View v) {
 //                Toast.makeText(getActivity(), "Fab clicked.", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(getActivity(), PushlishDealActivity.class);
+                Intent intent = new Intent(getActivity(), PublishDealActivity.class);
                 startActivity(intent);
             }
         });

@@ -14,7 +14,7 @@ import android.widget.Toast;
 
 import com.thu.thuhelp.R;
 
-public class PushlishDealActivity extends AppCompatActivity {
+public class PublishDealActivity extends AppCompatActivity {
 
     private enum TimeType {
         start, end, none;
@@ -26,7 +26,7 @@ public class PushlishDealActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_pushlish_deal);
+        setContentView(R.layout.activity_publish_deal);
 
         // set return actionBar
         ActionBar actionBar = getSupportActionBar();
