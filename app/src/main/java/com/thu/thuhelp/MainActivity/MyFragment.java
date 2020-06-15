@@ -63,7 +63,7 @@ public class MyFragment extends Fragment {
 //        return inflater.inflate(R.layout.fragment_my, container, false);
         activity = (MainActivity) getActivity();
         assert activity != null;
-        app = (App) requireActivity().getApplication();
+        app = (App) activity.getApplication();
         view = inflater.inflate(R.layout.fragment_my, container, false);
         return view;
     }
