@@ -49,7 +49,6 @@ public class MyFragment extends Fragment {
 
     private MainActivity activity;
     private App app;
-    private MainActivity activity;
     private View view;
 
     public MyFragment() {
@@ -63,7 +62,7 @@ public class MyFragment extends Fragment {
 //        return inflater.inflate(R.layout.fragment_my, container, false);
         activity = (MainActivity) getActivity();
         assert activity != null;
-        app = (App) requireActivity().getApplication();
+        app = (App) activity.getApplication();
         view = inflater.inflate(R.layout.fragment_my, container, false);
         return view;
     }
@@ -126,8 +125,7 @@ public class MyFragment extends Fragment {
                     if (statusCode == 200) {
 //                        ((TextView) view.findViewById(R.id.nickname_label)).setText(jsonObject.getString("nickname"));
 //                        ((TextView) view.findViewById(R.id.balance_label)).setText(jsonObject.getString("balance"));
-                    }
-                    else {
+                    } else {
                         activity.runOnUiThread(() -> Toast.makeText(activity, resStr, Toast.LENGTH_LONG).show());
                     }
                 } catch (JSONException e) {
