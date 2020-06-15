@@ -1,5 +1,6 @@
 package com.thu.thuhelp.MainActivity;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Application;
 import android.content.Context;
@@ -27,6 +28,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.thu.thuhelp.App;
 import com.thu.thuhelp.R;
 import com.thu.thuhelp.EnterActivity.LoginActivity;
@@ -55,6 +58,8 @@ public class MyFragment extends Fragment {
     static private int
             REQUEST_LOGIN = 0,
             REQUEST_REGISTER = 1;
+
+    static private int MAX_VALUE = 1000000;
 
     private MainActivity activity;
     private App app;
@@ -90,8 +95,16 @@ public class MyFragment extends Fragment {
             startActivityForResult(intent, REQUEST_REGISTER);
         });
 
+        view.findViewById(R.id.buttonLogout).setOnClickListener(v -> {
+            activity.logout();
+        });
+
         view.findViewById(R.id.buttonCash).setOnClickListener(v -> {
             showCashDialog();
+        });
+
+        view.findViewById(R.id.buttonDeposit).setOnClickListener(v -> {
+            showDepositDialog();
         });
     }
 
@@ -110,78 +123,139 @@ public class MyFragment extends Fragment {
 
     }
 
-    private EditText createValueEditor() {
-        class MoneyValueFilter extends DigitsKeyListener {
-            private static final String TAG = "MoneyValueFilter";
-            private int digits = 2;
-            private MoneyValueFilter() {
-                super(false, true);
-            }
-
-            @Override
-            public CharSequence filter(CharSequence source, int start, int end,
-                                       Spanned dest, int dstart, int dend) {
-                CharSequence out = super.filter(source, start, end, dest, dstart, dend);
-                if (out != null) {
-                    source = out;
-                    start = 0;
-                    end = out.length();
-                }
-                int len = end - start;
-                if (len == 0) {
-                    return source;
-                }
-                if(source.toString().equals(".") && dstart == 0){
-                    return "0.";
-                }
-                if(!source.toString().equals(".") && dest.toString().equals("0")){
-                    return "";
-                }
-                int dlen = dest.length();
-                for (int i = 0; i < dstart; i++) {
-                    if (dest.charAt(i) == '.') {
-                        return (dlen-(i+1) + len > digits) ?
-                                "" :
-                                new SpannableStringBuilder(source, start, end);
-                    }
-                }
-                for (int i = start; i < end; ++i) {
-                    if (source.charAt(i) == '.') {
-                        if ((dlen-dend)+(end-(i+1)) > digits) {
-                            return "";
-                        }
-                        else {
-                            break;
-                        }
-                    }
-                }
-                return new SpannableStringBuilder(source, start, end);
-            }
-        }
-        final EditText editText = new EditText(activity);
-        editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-        editText.setFilters(new InputFilter[]{new MoneyValueFilter()});
-
-        return editText;
+    private MaterialDialog.Builder buildInfoDialog(String content) {
+        return new MaterialDialog.Builder(activity)
+                .title("提示")
+                .content(content)
+                .positiveText("确认")
+                .positiveColor(getResources().getColor(R.color.colorPrimary));
     }
 
     private void showCashDialog() {
-        final EditText editText = createValueEditor();
-        new AlertDialog.Builder(activity).setTitle("提现金额")
-                .setView(editText)
-                .setPositiveButton("提交", new DialogInterface.OnClickListener() {
+        new MaterialDialog.Builder(activity)
+                .title("输入金额")
+                .inputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL)
+                .input(null, null, new MaterialDialog.InputCallback() {
                     @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        cash(Double.valueOf(editText.getText().toString()));
+                    public void onInput(MaterialDialog dialog, CharSequence input) {
+                        cash(input.toString());
                     }
                 })
+                .positiveText("确定")
+                .positiveColor(getResources().getColor(R.color.colorPrimary))
                 .show();
     }
 
-    private void cash(Double value) {
+    private void showDepositDialog() {
+        new MaterialDialog.Builder(activity)
+                .title("输入金额")
+                .inputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL)
+                .input(null, null, new MaterialDialog.InputCallback() {
+                    @Override
+                    public void onInput(MaterialDialog dialog, CharSequence input) {
+                        deposit(input.toString());
+                    }
+                })
+                .positiveText("确定")
+                .positiveColor(getResources().getColor(R.color.colorPrimary))
+                .show();
+    }
+
+    private boolean checkValue(String value) {
+        if (value == null || value.equals("")) {
+            buildInfoDialog("金额不能为空").show();
+            return false;
+        }
+        else if (Double.parseDouble(value) == 0) {
+            buildInfoDialog("金额不能为零").show();
+            return false;
+        }
+        else if (value.contains(".") && value.length() - value.indexOf(".") > 3) {
+            buildInfoDialog("仅限两位小数").show();
+            return false;
+        }
+        return true;
+    }
+
+    private void cash(String value) {
+        if (!checkValue(value)) {
+            return;
+        }
+        Double balance = Double.parseDouble(((TextView) view.findViewById(R.id.balance_label)).getText().toString());
+        if (Double.parseDouble(value) > balance) {
+            buildInfoDialog("提现金额大于余额").show();
+            return;
+        }
         HashMap<String, String> params = new HashMap<>();
         params.put("skey", app.getSkey());
-        params.put("value", value.toString());
+        params.put("value", value);
+        CommonInterface.sendOkHttpGetRequest("/user/account/cash", params, new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                Log.e("error", e.toString());
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                final String resStr = Objects.requireNonNull(response.body()).string();
+                try {
+                    JSONObject res = new JSONObject(resStr);
+                    int statusCode = res.getInt("status");
+                    if (statusCode == 200) {
+                        updateUserInfo();
+                    } else {
+                        Toast.makeText(activity, resStr, Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException ignored) {}
+            }
+        });
+    }
+
+    private void deposit(String value) {
+        if (!checkValue(value)) {
+            return;
+        }
+        Double balance = Double.parseDouble(((TextView) view.findViewById(R.id.balance_label)).getText().toString());
+        if (Double.parseDouble(value) + balance >= MAX_VALUE) {
+            buildInfoDialog("大于余额限制").show();
+            return;
+        }
+        HashMap<String, String> params = new HashMap<>();
+        params.put("skey", app.getSkey());
+        params.put("value", value);
+        CommonInterface.sendOkHttpGetRequest("/user/account/deposit", params, new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                Log.e("error", e.toString());
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                final String resStr = Objects.requireNonNull(response.body()).string();
+                try {
+                    JSONObject res = new JSONObject(resStr);
+                    int statusCode = res.getInt("status");
+                    if (statusCode == 200) {
+                        updateUserInfo();
+                    } else {
+                        Toast.makeText(activity, resStr, Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException ignored) {}
+            }
+        });
+    }
+
+    private void updateUserInfo() {
+        setLoginView();
+    }
+
+    void setLogoutView() {
+        view.findViewById(R.id.userCardView).setVisibility(View.INVISIBLE);
+        view.findViewById(R.id.buttonLogout).setVisibility(View.INVISIBLE);
+        view.findViewById(R.id.buttonLogin).setVisibility(View.VISIBLE);
+        view.findViewById(R.id.buttonRegister).setVisibility(View.VISIBLE);
+        ((TextView) view.findViewById(R.id.nickname_label)).setText(R.string.my_nickname);
+        ((TextView) view.findViewById(R.id.balance_label)).setText(R.string.my_balance);
     }
 
     void setLoginView() {
@@ -196,7 +270,6 @@ public class MyFragment extends Fragment {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 final String resStr = response.body().string();
-                Log.e("response", resStr);
                 try {
                     JSONObject res = new JSONObject(resStr);
                     int statusCode = res.getInt("status");
@@ -204,8 +277,10 @@ public class MyFragment extends Fragment {
                         JSONObject userInfo = res.getJSONObject("data");
                         activity.runOnUiThread(() -> {
                             try {
-                                view.findViewById(R.id.dealLayout).setVisibility(View.VISIBLE);
-                                view.findViewById(R.id.financeLayout).setVisibility(View.VISIBLE);
+                                view.findViewById(R.id.userCardView).setVisibility(View.VISIBLE);
+                                view.findViewById(R.id.buttonLogout).setVisibility(View.VISIBLE);
+                                view.findViewById(R.id.buttonLogin).setVisibility(View.INVISIBLE);
+                                view.findViewById(R.id.buttonRegister).setVisibility(View.INVISIBLE);
                                 ((TextView) view.findViewById(R.id.nickname_label)).setText(userInfo.getString("nickname"));
                                 ((TextView) view.findViewById(R.id.balance_label)).setText(userInfo.getString("balance"));
                             } catch (JSONException ignored) {}
@@ -213,10 +288,8 @@ public class MyFragment extends Fragment {
                     } else {
                         Toast.makeText(activity, resStr, Toast.LENGTH_LONG).show();
                     }
-                } catch (JSONException ignored) {
-                }
+                } catch (JSONException ignored) {}
             }
         });
-
     }
 }

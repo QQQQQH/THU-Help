@@ -123,6 +123,14 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    public void logout() {
+        ((MyFragment) pagerAdapter.getItem(1)).setLogoutView();
+        SharedPreferences.Editor preferencesEditor = sharedPreferences.edit();
+        preferencesEditor.clear();
+        preferencesEditor.apply();
+        app.setSkey(null);
+    }
+
     public void mainFragmentSetView() {
         MainFragment mainFragment = (MainFragment) (pagerAdapter.getItem(0));
         runOnUiThread(mainFragment::setView);

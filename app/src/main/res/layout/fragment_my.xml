@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_alignParentStart="true"
     android:orientation="vertical"
     tools:context=".MainActivity.MyFragment">
@@ -11,105 +12,117 @@
         android:id="@+id/profileLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginVertical="36dp"
         android:orientation="horizontal">
 
         <ImageView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:src="@mipmap/ic_launcher"
-            android:contentDescription="@null" />
+            android:contentDescription="@null"
+            android:src="@mipmap/ic_launcher" />
 
         <TextView
             android:id="@+id/nickname_label"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="2"
             android:layout_gravity="center_vertical"
+            android:layout_weight="2"
+            android:textSize="24sp"
             android:text="@string/my_nickname" />
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/financeLayout"
-        android:visibility="invisible"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/userCardView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:layout_marginHorizontal="24dp"
         android:layout_below="@id/profileLayout"
-        android:orientation="horizontal">
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginTop="12dp"
+        app:cardCornerRadius="@dimen/card_radius"
+        android:visibility="invisible">
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:layout_weight="1"
-            android:gravity="center_horizontal|center_vertical"
-            android:text="@string/balance" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/balance_label"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_margin="5dp"
-            android:gravity="center_horizontal|center_vertical"
-            android:text="@string/my_balance" />
+            <LinearLayout
+                android:id="@+id/financeLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginVertical="20dp"
+                android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/buttonDeposit"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1.5"
-            android:layout_margin="5dp"
-            android:text="@string/deposit" />
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:layout_weight="0.6"
+                    android:gravity="center_horizontal|center_vertical"
+                    android:text="@string/balance" />
 
-        <Button
-            android:id="@+id/buttonCash"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1.5"
-            android:layout_margin="5dp"
-            android:text="@string/cash" />
+                <TextView
+                    android:id="@+id/balance_label"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal|center_vertical"
+                    android:text="@string/my_balance" />
 
-    </LinearLayout>
+                <Button
+                    android:id="@+id/buttonDeposit"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:layout_weight="1.5"
+                    android:text="@string/deposit" />
 
-    <LinearLayout
-        android:id="@+id/dealLayout"
-        android:visibility="invisible"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="50dp"
-        android:layout_marginHorizontal="24dp"
-        android:layout_below="@id/financeLayout"
-        android:orientation="horizontal">
+                <Button
+                    android:id="@+id/buttonCash"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:layout_weight="1.5"
+                    android:text="@string/cash" />
+            </LinearLayout>
 
-        <Button
-            android:id="@+id/buttonMyPublish"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_margin="5dp"
-            android:text="@string/my_publish" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/financeLayout"
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginVertical="20dp"
+                android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/buttonMyAccept"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_margin="5dp"
-            android:text="@string/my_accept" />
+                <Button
+                    android:id="@+id/buttonMyPublish"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:layout_weight="1"
+                    android:text="@string/my_publish" />
 
-        <Button
-            android:id="@+id/buttonMyFinish"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_margin="5dp"
-            android:text="@string/my_finish" />
+                <Button
+                    android:id="@+id/buttonMyAccept"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:layout_weight="1"
+                    android:text="@string/my_accept" />
 
-    </LinearLayout>
+                <Button
+                    android:id="@+id/buttonMyFinish"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:layout_weight="1"
+                    android:text="@string/my_finish" />
+            </LinearLayout>
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
 
     <Button
         android:id="@+id/buttonLogin"
@@ -125,11 +138,22 @@
         android:id="@+id/buttonRegister"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_above="@+id/buttonLogout"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="24dp"
         android:text="@string/register" />
+
+    <Button
+        android:id="@+id/buttonLogout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="24dp"
+        android:text="@string/logout"
+        android:visibility="invisible" />
 
 
 </RelativeLayout>
