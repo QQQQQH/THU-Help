@@ -5,11 +5,11 @@ import android.app.Application;
 public class App extends Application {
     private String skey = null;
 
-    public String get_skey() {
+    public String getSkey() {
         return skey;
     }
 
-    public void set_skey(String skey) {
+    public void setSkey(String skey) {
         this.skey = skey;
     }
 }

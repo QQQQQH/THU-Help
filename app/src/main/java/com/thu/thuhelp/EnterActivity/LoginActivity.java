@@ -84,7 +84,7 @@ public class LoginActivity extends AppCompatActivity {
 
                         // set skey
                         App app = (App) getApplication();
-                        app.set_skey(jsonObject.getString("data"));
+                        app.setSkey(jsonObject.getString("data"));
                         SharedPreferences sharedPreferences = getSharedPreferences(
                                 getString(R.string.sharedPreFile_login), Context.MODE_PRIVATE);
 
@@ -97,7 +97,7 @@ public class LoginActivity extends AppCompatActivity {
                         setResult(RESULT_OK, intent);
                         finish();
                     } else {
-                        LoginActivity.this.runOnUiThread(() -> Toast.makeText(LoginActivity.this, resStr, Toast.LENGTH_LONG).show());
+                        LoginActivity.this.runOnUiThread(() -> Toast.makeText(LoginActivity.this, resStr, Toast.LENGTH_SHORT).show());
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

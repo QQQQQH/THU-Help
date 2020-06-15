@@ -62,7 +62,7 @@
             android:layout_marginTop="32dp"
             android:text="@string/address"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editTextDescription" />
+            app:layout_constraintTop_toBottomOf="@+id/textViewPhone" />
 
         <EditText
             android:id="@+id/editTextAddress"
@@ -94,7 +94,7 @@
             android:autofillHints="0"
             android:ems="10"
             android:hint="@string/deal_bonus"
-            android:inputType="number"
+            android:inputType="numberDecimal"
             app:layout_constraintBaseline_toBaselineOf="@+id/textViewBonus"
             app:layout_constraintStart_toEndOf="@+id/textViewBonus" />
 
@@ -169,6 +169,50 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/button2" />
+
+        <TextView
+            android:id="@+id/textViewName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="32dp"
+            android:text="@string/name"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/editTextDescription" />
+
+        <TextView
+            android:id="@+id/textViewPhone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="32dp"
+            android:text="@string/phone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewName" />
+
+        <EditText
+            android:id="@+id/editTextName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="64dp"
+            android:autofillHints="@string/name"
+            android:ems="10"
+            android:hint="@string/name"
+            android:inputType="textPersonName"
+            app:layout_constraintBaseline_toBaselineOf="@+id/textViewName"
+            app:layout_constraintStart_toEndOf="@+id/textViewName" />
+
+        <EditText
+            android:id="@+id/editTextPhone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="64dp"
+            android:autofillHints="@string/phone_number"
+            android:ems="10"
+            android:hint="@string/phone_number"
+            android:inputType="phone"
+            app:layout_constraintBaseline_toBaselineOf="@+id/textViewPhone"
+            app:layout_constraintStart_toEndOf="@+id/textViewPhone" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
