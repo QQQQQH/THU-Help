@@ -47,20 +47,14 @@ public class MyFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanced) {
         super.onViewCreated(view, savedInstanced);
 
-        view.findViewById(R.id.buttonLogin).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), LoginActivity.class);
-                startActivityForResult(intent, REQUEST_LOGIN);
-            }
+        view.findViewById(R.id.buttonLogin).setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            startActivityForResult(intent, REQUEST_LOGIN);
         });
 
-        view.findViewById(R.id.buttonRegister).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), RegisterActivity.class);
-                startActivityForResult(intent, REQUEST_REGISTER);
-            }
+        view.findViewById(R.id.buttonRegister).setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), RegisterActivity.class);
+            startActivityForResult(intent, REQUEST_REGISTER);
         });
     }
 

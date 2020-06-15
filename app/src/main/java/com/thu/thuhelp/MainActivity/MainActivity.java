@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
         sharedPreferences = getSharedPreferences(
                 getString(R.string.sharedPreFile_login), Context.MODE_PRIVATE);
 
-        if (app.get_skey() == null &&
+        if (app.getSkey() == null &&
                 sharedPreferences.getString(getString(R.string.student_id), null) != null &&
                 sharedPreferences.getString(getString(R.string.password), null) != null) {
             autoLogin();
@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
                     int statusCode = jsonObject.getInt("status");
                     if (statusCode == 200) {
                         // set skey
-                        app.set_skey(jsonObject.getString("data"));
+                        app.setSkey(jsonObject.getString("data"));
                         SharedPreferences sharedPreferences = getSharedPreferences(
                                 getString(R.string.sharedPreFile_login), Context.MODE_PRIVATE);
                         runOnUiThread(() -> Toast.makeText(MainActivity.this, R.string.login_success, Toast.LENGTH_SHORT).show());

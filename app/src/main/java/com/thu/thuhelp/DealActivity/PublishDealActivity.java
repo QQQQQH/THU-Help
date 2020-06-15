@@ -5,8 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
-import android.content.SharedPreferences;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -16,7 +15,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.thu.thuhelp.App;
-import com.thu.thuhelp.MainActivity.MainActivity;
 import com.thu.thuhelp.R;
 import com.thu.thuhelp.utils.CommonInterface;
 
@@ -136,7 +134,7 @@ public class PublishDealActivity extends AppCompatActivity {
                 stringEndTime += ":00";
 
                 HashMap<String, String> params = new HashMap<>();
-                params.put("skey", app.get_skey());
+                params.put("skey", app.getSkey());
                 params.put("title", stringTitle);
                 params.put("description", stringDescription);
                 params.put("name", stringName);
@@ -159,7 +157,9 @@ public class PublishDealActivity extends AppCompatActivity {
                             JSONObject jsonObject = new JSONObject(resStr);
                             int statusCode = jsonObject.getInt("status");
                             if (statusCode == 200) {
-                                runOnUiThread(() -> Toast.makeText(PublishDealActivity.this, R.string.publish_success, Toast.LENGTH_SHORT).show());
+                                Intent intent = new Intent();
+                                setResult(RESULT_OK, intent);
+                                finish();
                             } else {
                                 runOnUiThread(() -> Toast.makeText(PublishDealActivity.this, resStr, Toast.LENGTH_SHORT).show());
                             }
