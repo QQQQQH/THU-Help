@@ -85,7 +85,7 @@ public class RegisterActivity extends AppCompatActivity {
                         setResult(RESULT_OK, intent);
                         finish();
                     } else {
-                        RegisterActivity.this.runOnUiThread(() -> Toast.makeText(RegisterActivity.this, resStr, Toast.LENGTH_SHORT).show());
+                        RegisterActivity.this.runOnUiThread(() -> Toast.makeText(RegisterActivity.this, R.string.register_fail, Toast.LENGTH_SHORT).show());
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

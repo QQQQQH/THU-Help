@@ -12,7 +12,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 
 public class CommonInterface {
-    private static final String server_url = "http://123.57.140.189:80";
+    private static final String server_url = "http://10.0.2.2:8000";
 
     private static Request request;
 

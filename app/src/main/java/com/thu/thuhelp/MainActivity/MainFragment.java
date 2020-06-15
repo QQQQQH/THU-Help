@@ -32,10 +32,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.HashMap;
 import java.util.LinkedList;
 
 import okhttp3.Call;
@@ -57,7 +53,7 @@ public class MainFragment extends Fragment {
             REQUEST_PUBLISH = 0,
             REQUEST_INFO = 1;
 
-    public static final String EXTRA_DID = "com.thu.thuhelp.extra.did";
+    public static final String EXTRA_DEAL = "com.thu.thuhelp.extra.deal";
 
     public MainFragment() {
         // Required empty public constructor
@@ -78,9 +74,11 @@ public class MainFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanced) {
         super.onViewCreated(view, savedInstanced);
+    }
 
+    public void setView() {
         // set fab
-        view.findViewById(R.id.fabPublishDeal).setOnClickListener(new View.OnClickListener() {
+        activity.findViewById(R.id.fabPublishDeal).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (app.getSkey() == null) {
@@ -101,26 +99,26 @@ public class MainFragment extends Fragment {
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
-        setRecyclerView(view);
+        setRecyclerView();
     }
 
-    private void setRecyclerView(View view) {
+    private void setRecyclerView() {
 
         // set recycler view
-        recyclerViewDeal = view.findViewById(R.id.recyclerViewDeal);
-        adapter = new MissionListAdapter(view.getContext(), dealList);
+        recyclerViewDeal = activity.findViewById(R.id.recyclerViewDeal);
+        adapter = new MissionListAdapter(activity, dealList);
 
         recyclerViewDeal.setAdapter(adapter);
-        recyclerViewDeal.setLayoutManager(new LinearLayoutManager(view.getContext()));
-        recyclerViewDeal.addItemDecoration(new DividerItemDecoration(view.getContext(), DividerItemDecoration.VERTICAL));
+        recyclerViewDeal.setLayoutManager(new LinearLayoutManager(activity));
+        recyclerViewDeal.addItemDecoration(new DividerItemDecoration(activity, DividerItemDecoration.VERTICAL));
 
         getDealList();
 
         adapter.setOnItemClickListener((view1, position) -> {
 //            Toast.makeText(activity, "Clicked " + position, Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(activity, DealInfoActivity.class);
-            String did = dealList.get(position).did;
-            intent.putExtra(EXTRA_DID, did);
+            Deal deal = dealList.get(position);
+            intent.putExtra(EXTRA_DEAL, deal);
             startActivityForResult(intent, REQUEST_INFO);
         });
     }
@@ -154,7 +152,7 @@ public class MainFragment extends Fragment {
                         activity.runOnUiThread(() -> adapter.dealList = dealList);
                         activity.runOnUiThread(() -> adapter.notifyDataSetChanged());
                     } else {
-                        activity.runOnUiThread(() -> Toast.makeText(activity, resStr, Toast.LENGTH_LONG).show());
+                        activity.runOnUiThread(() -> Toast.makeText(activity, R.string.get_deal_list_fail, Toast.LENGTH_LONG).show());
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

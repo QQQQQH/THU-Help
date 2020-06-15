@@ -10,9 +10,10 @@ import android.widget.TextView;
 
 import com.thu.thuhelp.MainActivity.MainFragment;
 import com.thu.thuhelp.R;
+import com.thu.thuhelp.utils.Deal;
 
 public class DealInfoActivity extends AppCompatActivity {
-    private String did;
+    private Deal deal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,7 +21,8 @@ public class DealInfoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_deal_info);
 
         Intent intent = getIntent();
-        did = intent.getStringExtra(MainFragment.EXTRA_DID);
+        deal = intent.getParcelableExtra(MainFragment.EXTRA_DEAL);
+        String did = deal.name;
 
         TextView textView = findViewById(R.id.textView);
         textView.setText(did);
