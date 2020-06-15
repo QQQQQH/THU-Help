@@ -32,10 +32,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.HashMap;
 import java.util.LinkedList;
 
 import okhttp3.Call;
@@ -57,7 +53,7 @@ public class MainFragment extends Fragment {
             REQUEST_PUBLISH = 0,
             REQUEST_INFO = 1;
 
-    public static final String EXTRA_DID = "com.thu.thuhelp.extra.did";
+    public static final String EXTRA_DEAL = "com.thu.thuhelp.extra.deal";
 
     public MainFragment() {
         // Required empty public constructor
@@ -119,8 +115,8 @@ public class MainFragment extends Fragment {
         adapter.setOnItemClickListener((view1, position) -> {
 //            Toast.makeText(activity, "Clicked " + position, Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(activity, DealInfoActivity.class);
-            String did = dealList.get(position).did;
-            intent.putExtra(EXTRA_DID, did);
+            Deal deal = dealList.get(position);
+            intent.putExtra(EXTRA_DEAL, deal);
             startActivityForResult(intent, REQUEST_INFO);
         });
     }
