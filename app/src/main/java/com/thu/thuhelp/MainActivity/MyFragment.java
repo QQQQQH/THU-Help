@@ -47,7 +47,7 @@ public class MyFragment extends Fragment {
 //        return inflater.inflate(R.layout.fragment_my, container, false);
         View view = inflater.inflate(R.layout.fragment_my, container, false);
         app = (App) requireActivity().getApplication();
-        if (app.get_skey() == null) {
+        if (app.getSkey() == null) {
             view.findViewById(R.id.financeLayout).setVisibility(View.INVISIBLE);
             view.findViewById(R.id.dealLayout).setVisibility(View.INVISIBLE);
         }

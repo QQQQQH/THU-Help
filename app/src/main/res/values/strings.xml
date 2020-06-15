@@ -26,8 +26,6 @@
     <string name="address">地点</string>
     <string name="deal_address">任务地点</string>
     <string name="sharedPreFile_login">login</string>
-    <string name="login_success">Login successed.</string>
-    <string name="register_success">Register successed.</string>
     <string name="my_publish">已发布</string>
     <string name="my_accept">待完成</string>
     <string name="my_finish">已完成</string>
