@@ -32,6 +32,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.LinkedList;
 
 import okhttp3.Call;
@@ -128,8 +129,9 @@ public class MainFragment extends Fragment {
     }
 
     private void getDealList() {
-        String url = "/user/deal/list?" + "skey=" + app.getSkey();
-        CommonInterface.sendOkHttpGetRequest(url, new Callback() {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("skey", app.getSkey());
+        CommonInterface.sendOkHttpGetRequest("/user/deal/list", params, new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
                 Log.e("error", e.toString());
