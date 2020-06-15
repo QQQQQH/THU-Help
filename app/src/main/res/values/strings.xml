@@ -31,4 +31,12 @@
     <string name="sharedPreFile_login">login</string>
     <string name="login_success">Login successed.</string>
     <string name="register_success">Register successed.</string>
+    <string name="my_publish">已发布</string>
+    <string name="my_accept">待完成</string>
+    <string name="my_finish">已完成</string>
+    <string name="my_nickname">未登录</string>
+    <string name="balance">余额</string>
+    <string name="my_balance">null</string>
+    <string name="deposit">充值</string>
+    <string name="cash">提现</string>
 </resources>
