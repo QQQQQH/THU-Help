@@ -111,8 +111,7 @@ public class MainActivity extends AppCompatActivity {
                         runOnUiThread(() -> Toast.makeText(MainActivity.this, R.string.login_success, Toast.LENGTH_SHORT).show());
                         // set skey
                         app.setSkey(jsonObject.getString("data"));
-                        MainFragment mainFragment = (MainFragment) (pagerAdapter.getItem(0));
-                        runOnUiThread(mainFragment::setView);
+                        mainFragmentSetView();
                     } else {
                         runOnUiThread(() -> Toast.makeText(MainActivity.this, R.string.login_fail, Toast.LENGTH_SHORT).show());
                     }
@@ -121,5 +120,10 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    public void mainFragmentSetView() {
+        MainFragment mainFragment = (MainFragment) (pagerAdapter.getItem(0));
+        runOnUiThread(mainFragment::setView);
     }
 }

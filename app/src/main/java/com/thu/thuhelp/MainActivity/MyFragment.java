@@ -34,6 +34,7 @@ public class MyFragment extends Fragment {
             REQUEST_LOGIN = 0,
             REQUEST_REGISTER = 1;
 
+    private MainActivity activity;
     private App app;
 
     public MyFragment() {
@@ -46,7 +47,9 @@ public class MyFragment extends Fragment {
         // Inflate the layout for this fragment
 //        return inflater.inflate(R.layout.fragment_my, container, false);
         View view = inflater.inflate(R.layout.fragment_my, container, false);
-        app = (App) requireActivity().getApplication();
+        activity = (MainActivity) getActivity();
+        assert activity != null;
+        app = (App) activity.getApplication();
         if (app.getSkey() == null) {
             view.findViewById(R.id.financeLayout).setVisibility(View.INVISIBLE);
             view.findViewById(R.id.dealLayout).setVisibility(View.INVISIBLE);
@@ -75,6 +78,7 @@ public class MyFragment extends Fragment {
         if (resultCode == AppCompatActivity.RESULT_OK) {
             if (requestCode == REQUEST_LOGIN) {
                 Toast.makeText(getActivity(), R.string.login_success, Toast.LENGTH_SHORT).show();
+                activity.mainFragmentSetView();
             } else if (requestCode == REQUEST_REGISTER) {
                 Toast.makeText(getActivity(), R.string.register_success, Toast.LENGTH_SHORT).show();
             }

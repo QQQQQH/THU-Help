@@ -74,6 +74,14 @@ public class MainFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanced) {
         super.onViewCreated(view, savedInstanced);
+        SwipeRefreshLayout swipeRefreshLayout = activity.findViewById(R.id.swipeRefreshLayout);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                Toast.makeText(activity, R.string.please_login, Toast.LENGTH_SHORT).show();
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
     }
 
     public void setView() {
@@ -81,12 +89,8 @@ public class MainFragment extends Fragment {
         activity.findViewById(R.id.fabPublishDeal).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (app.getSkey() == null) {
-                    Toast.makeText(activity, R.string.please_login, Toast.LENGTH_SHORT).show();
-                } else {
-                    Intent intent = new Intent(activity, PublishDealActivity.class);
-                    startActivityForResult(intent, REQUEST_PUBLISH);
-                }
+                Intent intent = new Intent(activity, PublishDealActivity.class);
+                startActivityForResult(intent, REQUEST_PUBLISH);
             }
         });
 
@@ -160,6 +164,7 @@ public class MainFragment extends Fragment {
             }
         });
     }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
