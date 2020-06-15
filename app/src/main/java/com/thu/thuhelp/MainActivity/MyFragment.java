@@ -47,6 +47,7 @@ public class MyFragment extends Fragment {
             REQUEST_LOGIN = 0,
             REQUEST_REGISTER = 1;
 
+    private MainActivity activity;
     private App app;
     private MainActivity activity;
     private View view;
@@ -88,6 +89,7 @@ public class MyFragment extends Fragment {
         if (resultCode == AppCompatActivity.RESULT_OK) {
             if (requestCode == REQUEST_LOGIN) {
                 Toast.makeText(getActivity(), R.string.login_success, Toast.LENGTH_SHORT).show();
+                activity.mainFragmentSetView();
             } else if (requestCode == REQUEST_REGISTER) {
                 Toast.makeText(getActivity(), R.string.register_success, Toast.LENGTH_SHORT).show();
             }
