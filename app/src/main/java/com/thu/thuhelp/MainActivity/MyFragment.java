@@ -26,6 +26,7 @@ import com.thu.thuhelp.EnterActivity.RegisterActivity;
 import com.thu.thuhelp.utils.CommonInterface;
 
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -49,7 +50,6 @@ public class MyFragment extends Fragment {
 
     private MainActivity activity;
     private App app;
-    private MainActivity activity;
     private View view;
 
     public MyFragment() {
@@ -97,19 +97,7 @@ public class MyFragment extends Fragment {
 
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        setUserInfo();
-    }
-
-    private void setLoginView(String nickname, String balance) {
-        view.findViewById(R.id.financeLayout).setVisibility(View.VISIBLE);
-        view.findViewById(R.id.dealLayout).setVisibility(View.VISIBLE);
-
-    }
-
-    private void setUserInfo() {
+    public void setLoginView() {
         String skey = app.getSkey();
         if (skey == null) {
             return;
@@ -127,17 +115,25 @@ public class MyFragment extends Fragment {
                 final String resStr = response.body().string();
                 Log.e("response", resStr);
                 try {
-                    JSONObject jsonObject = new JSONObject(resStr);
-                    int statusCode = jsonObject.getInt("status");
+                    JSONObject res = new JSONObject(resStr);
+                    int statusCode = res.getInt("status");
                     if (statusCode == 200) {
+                        JSONObject userInfo = res.getJSONObject("data");
+                        activity.runOnUiThread(() -> {
+                            try {
+                                view.findViewById(R.id.dealLayout).setVisibility(View.VISIBLE);
+                                view.findViewById(R.id.financeLayout).setVisibility(View.VISIBLE);
+                                ((TextView) view.findViewById(R.id.nickname_label)).setText(userInfo.getString("nickname"));
+                                ((TextView) view.findViewById(R.id.balance_label)).setText(userInfo.getString("balance"));
+                            } catch (JSONException ignored) {}
+                        });
                     }
                     else {
-                        activity.runOnUiThread(() -> Toast.makeText(activity, resStr, Toast.LENGTH_LONG).show());
+                        Toast.makeText(activity, resStr, Toast.LENGTH_LONG).show();
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                } catch (JSONException ignored) {}
             }
         });
+
     }
 }
