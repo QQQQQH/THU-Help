@@ -90,6 +90,7 @@ public class MyFragment extends Fragment {
             if (requestCode == REQUEST_LOGIN) {
                 Toast.makeText(getActivity(), R.string.login_success, Toast.LENGTH_SHORT).show();
                 activity.mainFragmentSetView();
+                activity.myFragmentSetView();
             } else if (requestCode == REQUEST_REGISTER) {
                 Toast.makeText(getActivity(), R.string.register_success, Toast.LENGTH_SHORT).show();
             }
@@ -125,13 +126,14 @@ public class MyFragment extends Fragment {
                                 view.findViewById(R.id.financeLayout).setVisibility(View.VISIBLE);
                                 ((TextView) view.findViewById(R.id.nickname_label)).setText(userInfo.getString("nickname"));
                                 ((TextView) view.findViewById(R.id.balance_label)).setText(userInfo.getString("balance"));
-                            } catch (JSONException ignored) {}
+                            } catch (JSONException ignored) {
+                            }
                         });
-                    }
-                    else {
+                    } else {
                         Toast.makeText(activity, resStr, Toast.LENGTH_LONG).show();
                     }
-                } catch (JSONException ignored) {}
+                } catch (JSONException ignored) {
+                }
             }
         });
 
