@@ -97,7 +97,7 @@ public class LoginActivity extends AppCompatActivity {
                         setResult(RESULT_OK, intent);
                         finish();
                     } else {
-                        LoginActivity.this.runOnUiThread(() -> Toast.makeText(LoginActivity.this, resStr, Toast.LENGTH_LONG).show());
+                        LoginActivity.this.runOnUiThread(() -> Toast.makeText(LoginActivity.this, resStr, Toast.LENGTH_SHORT).show());
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

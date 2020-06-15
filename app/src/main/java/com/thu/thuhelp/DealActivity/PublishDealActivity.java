@@ -5,14 +5,31 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.thu.thuhelp.App;
+import com.thu.thuhelp.MainActivity.MainActivity;
 import com.thu.thuhelp.R;
+import com.thu.thuhelp.utils.CommonInterface;
+
+import org.jetbrains.annotations.NotNull;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.util.HashMap;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 public class PublishDealActivity extends AppCompatActivity {
 
@@ -22,6 +39,7 @@ public class PublishDealActivity extends AppCompatActivity {
 
     private TimeType timeType = TimeType.none;
     private String stringTimeMessage, stringStartTime, stringEndTime;
+    private App app;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +50,8 @@ public class PublishDealActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         assert actionBar != null;
         actionBar.setDisplayHomeAsUpEnabled(true);
+
+        app = (App) getApplication();
     }
 
     // set return actionBar
@@ -93,24 +113,61 @@ public class PublishDealActivity extends AppCompatActivity {
     public void onSubmitClick(View view) {
         EditText editTextTitle = findViewById(R.id.editTextTitle),
                 editTextDescription = findViewById(R.id.editTextDescription),
+                editTextName = findViewById(R.id.editTextName),
+                editTextPhone = findViewById(R.id.editTextPhone),
                 editTextAddress = findViewById(R.id.editTextAddress),
                 editTextBonus = findViewById(R.id.editTextBonus);
         String stringTitle = editTextTitle.getText().toString(),
                 stringDescription = editTextDescription.getText().toString(),
+                stringName = editTextName.getText().toString(),
+                stringPhone = editTextPhone.getText().toString(),
                 stringAddress = editTextAddress.getText().toString(),
                 stringBonus = editTextBonus.getText().toString();
-        if (stringTitle.equals("") || stringDescription.equals("") || stringAddress.equals("") || stringBonus.equals("")) {
+        if (stringTitle.equals("") || stringDescription.equals("") || stringName.equals("") ||
+                stringPhone.equals("") || stringAddress.equals("") || stringBonus.equals("") ||
+                stringStartTime == null || stringEndTime == null
+        ) {
             Toast.makeText(this, R.string.toast_fill_publish_message, Toast.LENGTH_SHORT).show();
         } else {
-            if (stringStartTime == null || stringEndTime == null || stringEndTime.compareTo(stringStartTime) <= 0) {
+            if (stringEndTime.compareTo(stringStartTime) <= 0) {
                 Toast.makeText(this, R.string.toast_publish_time_error, Toast.LENGTH_SHORT).show();
             } else {
                 stringStartTime += ":00";
                 stringEndTime += ":00";
-                String message = "Title: " + stringTitle + "\n Description: " + stringDescription +
-                        "\n Address: " + stringAddress + "\n Bouns: " + stringBonus +
-                        "\n StartTime: " + stringStartTime + "\n EndTime: " + stringEndTime;
-                Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+
+                HashMap<String, String> params = new HashMap<>();
+                params.put("skey", app.get_skey());
+                params.put("title", stringTitle);
+                params.put("description", stringDescription);
+                params.put("name", stringName);
+                params.put("phone", stringPhone);
+                params.put("address", stringAddress);
+                params.put("bonus", stringBonus);
+                params.put("start_time", stringStartTime);
+                params.put("end_time", stringEndTime);
+                CommonInterface.sendOkHttpPostRequest("/user/deal/publish", params, new Callback() {
+                    @Override
+                    public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                        Log.e("error", e.toString());
+                    }
+
+                    @Override
+                    public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                        final String resStr = response.body().string();
+                        Log.e("response", resStr);
+                        try {
+                            JSONObject jsonObject = new JSONObject(resStr);
+                            int statusCode = jsonObject.getInt("status");
+                            if (statusCode == 200) {
+                                runOnUiThread(() -> Toast.makeText(PublishDealActivity.this, R.string.publish_success, Toast.LENGTH_SHORT).show());
+                            } else {
+                                runOnUiThread(() -> Toast.makeText(PublishDealActivity.this, resStr, Toast.LENGTH_SHORT).show());
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
             }
         }
 
