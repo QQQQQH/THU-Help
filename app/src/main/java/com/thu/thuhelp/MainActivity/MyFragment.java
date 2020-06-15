@@ -99,10 +99,16 @@ public class MyFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        setLoginLayout();
+        setUserInfo();
     }
 
-    private void setLoginLayout() {
+    private void setLoginView(String nickname, String balance) {
+        view.findViewById(R.id.financeLayout).setVisibility(View.VISIBLE);
+        view.findViewById(R.id.dealLayout).setVisibility(View.VISIBLE);
+
+    }
+
+    private void setUserInfo() {
         String skey = app.getSkey();
         if (skey == null) {
             return;
@@ -123,9 +129,8 @@ public class MyFragment extends Fragment {
                     JSONObject jsonObject = new JSONObject(resStr);
                     int statusCode = jsonObject.getInt("status");
                     if (statusCode == 200) {
-//                        ((TextView) view.findViewById(R.id.nickname_label)).setText(jsonObject.getString("nickname"));
-//                        ((TextView) view.findViewById(R.id.balance_label)).setText(jsonObject.getString("balance"));
-                    } else {
+                    }
+                    else {
                         activity.runOnUiThread(() -> Toast.makeText(activity, resStr, Toast.LENGTH_LONG).show());
                     }
                 } catch (JSONException e) {
@@ -133,7 +138,5 @@ public class MyFragment extends Fragment {
                 }
             }
         });
-        view.findViewById(R.id.financeLayout).setVisibility(View.VISIBLE);
-        view.findViewById(R.id.dealLayout).setVisibility(View.VISIBLE);
     }
 }
