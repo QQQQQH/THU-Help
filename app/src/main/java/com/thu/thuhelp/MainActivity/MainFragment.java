@@ -74,9 +74,11 @@ public class MainFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanced) {
         super.onViewCreated(view, savedInstanced);
+    }
 
+    public void setView() {
         // set fab
-        view.findViewById(R.id.fabPublishDeal).setOnClickListener(new View.OnClickListener() {
+        activity.findViewById(R.id.fabPublishDeal).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (app.getSkey() == null) {
@@ -97,18 +99,18 @@ public class MainFragment extends Fragment {
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
-        setRecyclerView(view);
+        setRecyclerView();
     }
 
-    private void setRecyclerView(View view) {
+    private void setRecyclerView() {
 
         // set recycler view
-        recyclerViewDeal = view.findViewById(R.id.recyclerViewDeal);
-        adapter = new MissionListAdapter(view.getContext(), dealList);
+        recyclerViewDeal = activity.findViewById(R.id.recyclerViewDeal);
+        adapter = new MissionListAdapter(activity, dealList);
 
         recyclerViewDeal.setAdapter(adapter);
-        recyclerViewDeal.setLayoutManager(new LinearLayoutManager(view.getContext()));
-        recyclerViewDeal.addItemDecoration(new DividerItemDecoration(view.getContext(), DividerItemDecoration.VERTICAL));
+        recyclerViewDeal.setLayoutManager(new LinearLayoutManager(activity));
+        recyclerViewDeal.addItemDecoration(new DividerItemDecoration(activity, DividerItemDecoration.VERTICAL));
 
         getDealList();
 
@@ -150,7 +152,7 @@ public class MainFragment extends Fragment {
                         activity.runOnUiThread(() -> adapter.dealList = dealList);
                         activity.runOnUiThread(() -> adapter.notifyDataSetChanged());
                     } else {
-                        activity.runOnUiThread(() -> Toast.makeText(activity, resStr, Toast.LENGTH_LONG).show());
+                        activity.runOnUiThread(() -> Toast.makeText(activity, R.string.get_deal_list_fail, Toast.LENGTH_LONG).show());
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

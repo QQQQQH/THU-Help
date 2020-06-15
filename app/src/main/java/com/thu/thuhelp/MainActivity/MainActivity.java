@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     private ViewPager viewPager;
     private App app;
     private SharedPreferences sharedPreferences = null;
+    private PagerAdapter pagerAdapter = new PagerAdapter(getSupportFragmentManager());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,15 +43,8 @@ public class MainActivity extends AppCompatActivity {
         sharedPreferences = getSharedPreferences(
                 getString(R.string.sharedPreFile_login), Context.MODE_PRIVATE);
 
-        if (app.getSkey() == null &&
-                sharedPreferences.getString(getString(R.string.student_id), null) != null &&
-                sharedPreferences.getString(getString(R.string.password), null) != null) {
-            autoLogin();
-        }
-
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         viewPager = findViewById(R.id.pager);
-        PagerAdapter pagerAdapter = new PagerAdapter(getSupportFragmentManager());
 
         pagerAdapter.addFragment(new MainFragment());
         pagerAdapter.addFragment(new MyFragment());
@@ -70,23 +64,28 @@ public class MainActivity extends AppCompatActivity {
             public void onPageScrollStateChanged(int state) {
             }
         });
-
-        bottomNavigationView.setOnNavigationItemSelectedListener(
-                new BottomNavigationView.OnNavigationItemSelectedListener() {
-                    @Override
-                    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                        switch (menuItem.getItemId()) {
-                            case R.id.item_main_page:
-                                viewPager.setCurrentItem(0);
-                                return true;
-                            case R.id.item_my_page:
-                                viewPager.setCurrentItem(1);
-                                return true;
-                        }
-                        return false;
+        bottomNavigationView.setOnNavigationItemSelectedListener(menuItem -> {
+                    switch (menuItem.getItemId()) {
+                        case R.id.item_main_page:
+                            viewPager.setCurrentItem(0);
+                            return true;
+                        case R.id.item_my_page:
+                            viewPager.setCurrentItem(1);
+                            return true;
                     }
+                    return false;
                 }
         );
+        new Thread() {
+            @Override
+            public void run() {
+                if (app.getSkey() == null &&
+                        sharedPreferences.getString(getString(R.string.student_id), null) != null &&
+                        sharedPreferences.getString(getString(R.string.password), null) != null) {
+                    autoLogin();
+                }
+            }
+        }.start();
     }
 
     private void autoLogin() {
@@ -109,13 +108,13 @@ public class MainActivity extends AppCompatActivity {
                     JSONObject jsonObject = new JSONObject(resStr);
                     int statusCode = jsonObject.getInt("status");
                     if (statusCode == 200) {
+                        runOnUiThread(() -> Toast.makeText(MainActivity.this, R.string.login_success, Toast.LENGTH_SHORT).show());
                         // set skey
                         app.setSkey(jsonObject.getString("data"));
-                        SharedPreferences sharedPreferences = getSharedPreferences(
-                                getString(R.string.sharedPreFile_login), Context.MODE_PRIVATE);
-                        runOnUiThread(() -> Toast.makeText(MainActivity.this, R.string.login_success, Toast.LENGTH_SHORT).show());
+                        MainFragment mainFragment = (MainFragment) (pagerAdapter.getItem(0));
+                        runOnUiThread(mainFragment::setView);
                     } else {
-                        runOnUiThread(() -> Toast.makeText(MainActivity.this, resStr, Toast.LENGTH_SHORT).show());
+                        runOnUiThread(() -> Toast.makeText(MainActivity.this, R.string.login_fail, Toast.LENGTH_SHORT).show());
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

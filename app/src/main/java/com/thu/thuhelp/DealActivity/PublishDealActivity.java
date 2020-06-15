@@ -161,7 +161,7 @@ public class PublishDealActivity extends AppCompatActivity {
                                 setResult(RESULT_OK, intent);
                                 finish();
                             } else {
-                                runOnUiThread(() -> Toast.makeText(PublishDealActivity.this, resStr, Toast.LENGTH_SHORT).show());
+                                runOnUiThread(() -> Toast.makeText(PublishDealActivity.this, R.string.publish_deal_fail, Toast.LENGTH_SHORT).show());
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
