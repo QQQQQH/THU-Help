@@ -11,18 +11,31 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.thu.thuhelp.App;
 import com.thu.thuhelp.R;
 import com.thu.thuhelp.EnterActivity.LoginActivity;
 import com.thu.thuhelp.EnterActivity.RegisterActivity;
+import com.thu.thuhelp.utils.CommonInterface;
 
+import org.jetbrains.annotations.NotNull;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.Objects;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 
 /**
@@ -36,6 +49,8 @@ public class MyFragment extends Fragment {
 
     private MainActivity activity;
     private App app;
+    private MainActivity activity;
+    private View view;
 
     public MyFragment() {
         // Required empty public constructor
@@ -46,14 +61,10 @@ public class MyFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 //        return inflater.inflate(R.layout.fragment_my, container, false);
-        View view = inflater.inflate(R.layout.fragment_my, container, false);
         activity = (MainActivity) getActivity();
         assert activity != null;
-        app = (App) activity.getApplication();
-        if (app.getSkey() == null) {
-            view.findViewById(R.id.financeLayout).setVisibility(View.INVISIBLE);
-            view.findViewById(R.id.dealLayout).setVisibility(View.INVISIBLE);
-        }
+        app = (App) requireActivity().getApplication();
+        view = inflater.inflate(R.layout.fragment_my, container, false);
         return view;
     }
 
@@ -84,5 +95,47 @@ public class MyFragment extends Fragment {
             }
         }
 
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        setLoginLayout();
+    }
+
+    private void setLoginLayout() {
+        String skey = app.getSkey();
+        if (skey == null) {
+            return;
+        }
+        HashMap<String, String> params = new HashMap<>();
+        params.put("skey", skey);
+        CommonInterface.sendOkHttpGetRequest("/user/account/info", params, new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                Log.e("error", e.toString());
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                final String resStr = response.body().string();
+                Log.e("response", resStr);
+                try {
+                    JSONObject jsonObject = new JSONObject(resStr);
+                    int statusCode = jsonObject.getInt("status");
+                    if (statusCode == 200) {
+//                        ((TextView) view.findViewById(R.id.nickname_label)).setText(jsonObject.getString("nickname"));
+//                        ((TextView) view.findViewById(R.id.balance_label)).setText(jsonObject.getString("balance"));
+                    }
+                    else {
+                        activity.runOnUiThread(() -> Toast.makeText(activity, resStr, Toast.LENGTH_LONG).show());
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        view.findViewById(R.id.financeLayout).setVisibility(View.VISIBLE);
+        view.findViewById(R.id.dealLayout).setVisibility(View.VISIBLE);
     }
 }
