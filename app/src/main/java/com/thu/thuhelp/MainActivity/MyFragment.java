@@ -1,7 +1,9 @@
 package com.thu.thuhelp.MainActivity;
 
+import android.app.AlertDialog;
 import android.app.Application;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -11,10 +13,16 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
+import android.text.InputFilter;
+import android.text.InputType;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.method.DigitsKeyListener;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -81,6 +89,10 @@ public class MyFragment extends Fragment {
             Intent intent = new Intent(getActivity(), RegisterActivity.class);
             startActivityForResult(intent, REQUEST_REGISTER);
         });
+
+        view.findViewById(R.id.buttonCash).setOnClickListener(v -> {
+            showCashDialog();
+        });
     }
 
     @Override
@@ -98,13 +110,83 @@ public class MyFragment extends Fragment {
 
     }
 
-    public void setLoginView() {
-        String skey = app.getSkey();
-        if (skey == null) {
-            return;
+    private EditText createValueEditor() {
+        class MoneyValueFilter extends DigitsKeyListener {
+            private static final String TAG = "MoneyValueFilter";
+            private int digits = 2;
+            private MoneyValueFilter() {
+                super(false, true);
+            }
+
+            @Override
+            public CharSequence filter(CharSequence source, int start, int end,
+                                       Spanned dest, int dstart, int dend) {
+                CharSequence out = super.filter(source, start, end, dest, dstart, dend);
+                if (out != null) {
+                    source = out;
+                    start = 0;
+                    end = out.length();
+                }
+                int len = end - start;
+                if (len == 0) {
+                    return source;
+                }
+                if(source.toString().equals(".") && dstart == 0){
+                    return "0.";
+                }
+                if(!source.toString().equals(".") && dest.toString().equals("0")){
+                    return "";
+                }
+                int dlen = dest.length();
+                for (int i = 0; i < dstart; i++) {
+                    if (dest.charAt(i) == '.') {
+                        return (dlen-(i+1) + len > digits) ?
+                                "" :
+                                new SpannableStringBuilder(source, start, end);
+                    }
+                }
+                for (int i = start; i < end; ++i) {
+                    if (source.charAt(i) == '.') {
+                        if ((dlen-dend)+(end-(i+1)) > digits) {
+                            return "";
+                        }
+                        else {
+                            break;
+                        }
+                    }
+                }
+                return new SpannableStringBuilder(source, start, end);
+            }
         }
+        final EditText editText = new EditText(activity);
+        editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        editText.setFilters(new InputFilter[]{new MoneyValueFilter()});
+
+        return editText;
+    }
+
+    private void showCashDialog() {
+        final EditText editText = createValueEditor();
+        new AlertDialog.Builder(activity).setTitle("提现金额")
+                .setView(editText)
+                .setPositiveButton("提交", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        cash(Double.valueOf(editText.getText().toString()));
+                    }
+                })
+                .show();
+    }
+
+    private void cash(Double value) {
         HashMap<String, String> params = new HashMap<>();
-        params.put("skey", skey);
+        params.put("skey", app.getSkey());
+        params.put("value", value.toString());
+    }
+
+    void setLoginView() {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("skey", app.getSkey());
         CommonInterface.sendOkHttpGetRequest("/user/account/info", params, new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
@@ -126,8 +208,7 @@ public class MyFragment extends Fragment {
                                 view.findViewById(R.id.financeLayout).setVisibility(View.VISIBLE);
                                 ((TextView) view.findViewById(R.id.nickname_label)).setText(userInfo.getString("nickname"));
                                 ((TextView) view.findViewById(R.id.balance_label)).setText(userInfo.getString("balance"));
-                            } catch (JSONException ignored) {
-                            }
+                            } catch (JSONException ignored) {}
                         });
                     } else {
                         Toast.makeText(activity, resStr, Toast.LENGTH_LONG).show();
