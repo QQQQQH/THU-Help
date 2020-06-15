@@ -112,6 +112,7 @@ public class MainActivity extends AppCompatActivity {
                         // set skey
                         app.setSkey(jsonObject.getString("data"));
                         mainFragmentSetView();
+                        myFragmentSetView();
                     } else {
                         runOnUiThread(() -> Toast.makeText(MainActivity.this, R.string.login_fail, Toast.LENGTH_SHORT).show());
                     }
@@ -125,5 +126,10 @@ public class MainActivity extends AppCompatActivity {
     public void mainFragmentSetView() {
         MainFragment mainFragment = (MainFragment) (pagerAdapter.getItem(0));
         runOnUiThread(mainFragment::setView);
+    }
+
+    public void myFragmentSetView() {
+        MyFragment myFragment = (MyFragment) (pagerAdapter.getItem(1));
+        runOnUiThread(myFragment::setLoginView);
     }
 }
