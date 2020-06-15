@@ -14,6 +14,15 @@ import com.thu.thuhelp.utils.Deal;
 
 public class DealInfoActivity extends AppCompatActivity {
     private Deal deal;
+    private TextView
+            textViewShowTitle,
+            textViewShowDescription,
+            textViewShowName,
+            textViewShowPhone,
+            textViewShowAddress,
+            textViewShowBonus,
+            textViewShowStartTime,
+            textViewShowEndTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,10 +31,8 @@ public class DealInfoActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         deal = intent.getParcelableExtra(MainFragment.EXTRA_DEAL);
-        String did = deal.name;
 
-        TextView textView = findViewById(R.id.textView);
-        textView.setText(did);
+        setView();
 
         // set return actionBar
         ActionBar actionBar = getSupportActionBar();
@@ -41,5 +48,25 @@ public class DealInfoActivity extends AppCompatActivity {
             return false;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void setView() {
+        textViewShowTitle = findViewById(R.id.textViewShowTitle);
+        textViewShowDescription = findViewById(R.id.textViewShowDescription);
+        textViewShowName = findViewById(R.id.textViewShowName);
+        textViewShowPhone = findViewById(R.id.textViewShowPhone);
+        textViewShowAddress = findViewById(R.id.textViewShowAddress);
+        textViewShowBonus = findViewById(R.id.textViewShowBonus);
+        textViewShowStartTime = findViewById(R.id.textViewShowStartTime);
+        textViewShowEndTime = findViewById(R.id.textViewShowEndTime);
+
+        textViewShowTitle.setText(deal.title);
+        textViewShowDescription.setText(deal.description);
+        textViewShowName.setText(deal.name);
+        textViewShowPhone.setText(deal.phone);
+        textViewShowAddress.setText(deal.address);
+        textViewShowBonus.setText(String.valueOf(deal.bonus));
+        textViewShowStartTime.setText(deal.startTime);
+        textViewShowEndTime.setText(deal.endTime);
     }
 }
