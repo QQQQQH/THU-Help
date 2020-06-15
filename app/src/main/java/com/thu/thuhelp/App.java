@@ -12,4 +12,5 @@ public class App extends Application {
     public void setSkey(String skey) {
         this.skey = skey;
     }
+
 }

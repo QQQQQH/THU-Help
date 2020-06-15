@@ -14,12 +14,15 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.thu.thuhelp.App;
 import com.thu.thuhelp.R;
 import com.thu.thuhelp.EnterActivity.LoginActivity;
 import com.thu.thuhelp.EnterActivity.RegisterActivity;
+
+import java.util.Objects;
 
 
 /**
@@ -31,16 +34,24 @@ public class MyFragment extends Fragment {
             REQUEST_LOGIN = 0,
             REQUEST_REGISTER = 1;
 
+    private App app;
+
     public MyFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_my, container, false);
+//        return inflater.inflate(R.layout.fragment_my, container, false);
+        View view = inflater.inflate(R.layout.fragment_my, container, false);
+        app = (App) requireActivity().getApplication();
+        if (app.getSkey() == null) {
+            view.findViewById(R.id.financeLayout).setVisibility(View.INVISIBLE);
+            view.findViewById(R.id.dealLayout).setVisibility(View.INVISIBLE);
+        }
+        return view;
     }
 
     @Override
