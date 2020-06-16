@@ -50,6 +50,9 @@ public class MainFragment extends Fragment {
     private App app;
     private MainActivity activity;
 
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private int clickedPosition;
+
     static private int
             REQUEST_PUBLISH = 0,
             REQUEST_INFO = 1;
@@ -75,7 +78,7 @@ public class MainFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanced) {
         super.onViewCreated(view, savedInstanced);
-        SwipeRefreshLayout swipeRefreshLayout = activity.findViewById(R.id.swipeRefreshLayout);
+        swipeRefreshLayout = activity.findViewById(R.id.swipeRefreshLayout);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -96,12 +99,10 @@ public class MainFragment extends Fragment {
         });
 
         // set swipe refresh layout
-        SwipeRefreshLayout swipeRefreshLayout = activity.findViewById(R.id.swipeRefreshLayout);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                getDealList();
-                swipeRefreshLayout.setRefreshing(false);
+                updateDealList();
             }
         });
         setRecyclerView();
@@ -117,24 +118,28 @@ public class MainFragment extends Fragment {
         recyclerViewDeal.setLayoutManager(new LinearLayoutManager(activity));
         recyclerViewDeal.addItemDecoration(new DividerItemDecoration(activity, DividerItemDecoration.VERTICAL));
 
-        getDealList();
+        updateDealList();
 
-        adapter.setOnItemClickListener((view1, position) -> {
+        adapter.setOnItemClickListener((view, position) -> {
 //            Toast.makeText(activity, "Clicked " + position, Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(activity, DealInfoActivity.class);
+            clickedPosition = position;
             Deal deal = dealList.get(position);
+            Intent intent = new Intent(activity, DealInfoActivity.class);
             intent.putExtra(EXTRA_DEAL, deal);
             startActivityForResult(intent, REQUEST_INFO);
         });
     }
 
-    private void getDealList() {
+    private void updateDealList() {
         HashMap<String, String> params = new HashMap<>();
         params.put("skey", app.getSkey());
+
+        swipeRefreshLayout.setRefreshing(true);
         CommonInterface.sendOkHttpGetRequest("/user/deal/list", params, new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
                 Log.e("error", e.toString());
+                swipeRefreshLayout.setRefreshing(false);
             }
 
             @Override
@@ -145,7 +150,7 @@ public class MainFragment extends Fragment {
                     JSONObject res = new JSONObject(resStr);
                     int statusCode = res.getInt("status");
                     if (statusCode == 200) {
-                        activity.runOnUiThread(() -> Toast.makeText(activity, R.string.get_deal_list_success, Toast.LENGTH_LONG).show());
+                        activity.runOnUiThread(() -> Toast.makeText(activity, R.string.get_deal_list_success, Toast.LENGTH_SHORT).show());
 
                         JSONArray jsonDealList = res.getJSONArray("data");
                         dealList.clear();
@@ -158,11 +163,12 @@ public class MainFragment extends Fragment {
                         activity.runOnUiThread(() -> adapter.dealList = dealList);
                         activity.runOnUiThread(() -> adapter.notifyDataSetChanged());
                     } else {
-                        activity.runOnUiThread(() -> Toast.makeText(activity, R.string.get_deal_list_fail, Toast.LENGTH_LONG).show());
+                        activity.runOnUiThread(() -> Toast.makeText(activity, R.string.get_deal_list_fail, Toast.LENGTH_SHORT).show());
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                swipeRefreshLayout.setRefreshing(false);
             }
         });
     }
@@ -174,6 +180,12 @@ public class MainFragment extends Fragment {
         if (resultCode == AppCompatActivity.RESULT_OK) {
             if (requestCode == REQUEST_PUBLISH) {
                 Toast.makeText(getActivity(), R.string.publish_success, Toast.LENGTH_SHORT).show();
+                updateDealList();
+            } else if (requestCode == REQUEST_INFO) {
+                Toast.makeText(getContext(), R.string.accept_deal_success, Toast.LENGTH_SHORT).show();
+                dealList.remove(clickedPosition);
+                adapter.notifyDataSetChanged();
+                updateDealList();
             }
         }
 
