@@ -1,18 +1,33 @@
 package com.thu.thuhelp.MainActivity;
 
+import android.Manifest;
+import android.content.ContentResolver;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +43,8 @@ import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Objects;
@@ -44,9 +61,13 @@ public class MyFragment extends Fragment {
 
     static private int
             REQUEST_LOGIN = 0,
-            REQUEST_REGISTER = 1;
+            REQUEST_REGISTER = 1,
+            REQUEST_CAMERA = 2,
+            REQUEST_ALBUM = 3,
+            REQUEST_CROP = 4;
 
     static private int MAX_VALUE = 1000000;
+    private File avatarFile;
 
     private MainActivity activity;
     private App app;
@@ -73,6 +94,7 @@ public class MyFragment extends Fragment {
         assert activity != null;
         app = (App) activity.getApplication();
         view = inflater.inflate(R.layout.fragment_my, container, false);
+        avatarFile = new File(new File(activity.getFilesDir(), "images"), "avatar.jpg");
         return view;
     }
 
@@ -102,6 +124,10 @@ public class MyFragment extends Fragment {
             showDepositDialog();
         });
 
+        view.findViewById(R.id.profileLayout).setOnClickListener(v -> {
+            showEditProfileDialog();
+        });
+
         view.findViewById(R.id.buttonMyPublish).setOnClickListener(v -> {
             Intent intent = new Intent(activity, DealListActivity.class);
             intent.putExtra(EXTRA_DEAL_STATE, DEAL_PUBLISH);
@@ -125,7 +151,6 @@ public class MyFragment extends Fragment {
             intent.putExtra(EXTRA_DEAL_STATE, DEAL_FINISH);
             startActivity(intent);
         });
-
     }
 
     @Override
@@ -136,8 +161,18 @@ public class MyFragment extends Fragment {
                 Toast.makeText(getActivity(), R.string.login_success, Toast.LENGTH_SHORT).show();
                 activity.mainFragmentSetView();
                 activity.myFragmentSetView();
-            } else if (requestCode == REQUEST_REGISTER) {
+            }
+            else if (requestCode == REQUEST_REGISTER) {
                 Toast.makeText(getActivity(), R.string.register_success, Toast.LENGTH_SHORT).show();
+            }
+            else if (requestCode == REQUEST_CAMERA && data != null) {
+                cropAvatar();
+            }
+            else if (requestCode == REQUEST_ALBUM && data != null) {
+
+            }
+            else if (requestCode == REQUEST_CROP) {
+                updateAvatar();
             }
         }
 
@@ -151,6 +186,28 @@ public class MyFragment extends Fragment {
                 .positiveColor(getResources().getColor(R.color.colorPrimary));
     }
 
+    private void showEditProfileDialog() {
+        new MaterialDialog.Builder(activity)
+                .title("标题")
+                .items(R.array.edit_profile)
+                .itemsCallback(new MaterialDialog.ListCallback() {
+                    @Override
+                    public void onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                        if (which == 0) {
+                            editAvatar();
+                        }
+                        else if (which == 1) {
+                            editProfile();
+                        }
+                    }
+                })
+                .positiveText("确认")
+                .negativeText("取消")
+                .positiveColor(getResources().getColor(R.color.colorPrimary))
+                .negativeColor(getResources().getColor(R.color.colorPrimary))
+                .show();
+    }
+
     private void showCashDialog() {
         new MaterialDialog.Builder(activity)
                 .title("输入金额")
@@ -162,7 +219,9 @@ public class MyFragment extends Fragment {
                     }
                 })
                 .positiveText("确定")
+                .negativeText("取消")
                 .positiveColor(getResources().getColor(R.color.colorPrimary))
+                .negativeColor(getResources().getColor(R.color.colorPrimary))
                 .show();
     }
 
@@ -177,7 +236,9 @@ public class MyFragment extends Fragment {
                     }
                 })
                 .positiveText("确定")
+                .negativeText("取消")
                 .positiveColor(getResources().getColor(R.color.colorPrimary))
+                .negativeColor(getResources().getColor(R.color.colorPrimary))
                 .show();
     }
 
@@ -263,6 +324,76 @@ public class MyFragment extends Fragment {
                 }
             }
         });
+    }
+
+    private void editAvatar() {
+        // 获取权限
+        new MaterialDialog.Builder(activity)
+                .title("选择图片")
+                .items(R.array.edit_avatar)
+                .itemsCallback(new MaterialDialog.ListCallback() {
+                    @Override
+                    public void onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                        if (which == 0) {
+                            Intent camera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                            if (camera.resolveActivity(activity.getPackageManager()) != null) {
+                                Uri imageURI = FileProvider.getUriForFile(
+                                        activity,
+                                        "com.edu.thuhelp.fileprovider",
+                                        avatarFile
+                                );
+                                camera.putExtra(MediaStore.EXTRA_OUTPUT, imageURI);
+                                startActivityForResult(camera, REQUEST_CAMERA);
+                            }
+                        }
+                        else if (which == 1) {
+                            Intent album = new Intent(
+                                    Intent.ACTION_PICK,
+                                    android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                            startActivityForResult(album, REQUEST_ALBUM);
+                        }
+                    }
+                })
+                .positiveText("确认")
+                .negativeText("取消")
+                .positiveColor(getResources().getColor(R.color.colorPrimary))
+                .negativeColor(getResources().getColor(R.color.colorPrimary))
+                .show();
+    }
+
+    private void cropAvatar() {
+        Uri imageURI = FileProvider.getUriForFile(
+                activity,
+                "com.edu.thuhelp.fileprovider",
+                avatarFile
+        );
+        Intent crop = new Intent("com.android.camera.action.CROP");
+        crop.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        crop.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        crop.setDataAndType(imageURI, "image/*");
+        crop.putExtra("crop", "true");
+        crop.putExtra("aspectX", 1);
+        crop.putExtra("aspectY", 1);
+        crop.putExtra("outputX", 150);
+        crop.putExtra("outputY", 150);
+        crop.putExtra("return-data", true);
+        crop.putExtra(MediaStore.EXTRA_OUTPUT, imageURI);
+        startActivityForResult(crop, REQUEST_CROP);
+    }
+
+    private void updateAvatar() {
+        ContentResolver cr = activity.getContentResolver();
+        try {
+            Bitmap avatar = BitmapFactory.decodeStream(cr.openInputStream(Uri.fromFile(avatarFile)));
+            ((ImageView) view.findViewById(R.id.avatarView)).setImageBitmap(avatar);
+        }
+        catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void editProfile() {
+
     }
 
     private void updateUserInfo() {

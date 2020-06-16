@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="edit_profile">
+        <item>上传头像</item>
+        <item>修改信息</item>
+    </string-array>
+    <string-array name="edit_avatar">
+        <item>相机</item>
+        <item>从相册中选择</item>
+    </string-array>
+</resources>
