@@ -94,7 +94,7 @@ public class MyFragment extends Fragment {
         assert activity != null;
         app = (App) activity.getApplication();
         view = inflater.inflate(R.layout.fragment_my, container, false);
-        avatarFile = new File(new File(activity.getFilesDir(), "images"), "avatar.jpg");
+        avatarFile = new File(new File(activity.getFilesDir(), "images"), "avatar_new.jpg");
         return view;
     }
 
@@ -172,7 +172,7 @@ public class MyFragment extends Fragment {
 
             }
             else if (requestCode == REQUEST_CROP) {
-                updateAvatar();
+                uploadAvatar();
             }
         }
 
@@ -379,6 +379,32 @@ public class MyFragment extends Fragment {
         crop.putExtra("return-data", true);
         crop.putExtra(MediaStore.EXTRA_OUTPUT, imageURI);
         startActivityForResult(crop, REQUEST_CROP);
+    }
+
+    private void uploadAvatar() {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("skey", app.getSkey());
+        CommonInterface.uploadImage("/user/account/upload-avatar", params, avatarFile.toString(), new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                Log.e("error", e.toString());
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                final String resStr = Objects.requireNonNull(response.body()).string();
+                try {
+                    JSONObject res = new JSONObject(resStr);
+                    int statusCode = res.getInt("status");
+                    if (statusCode == 200) {
+                        activity.runOnUiThread(() -> Toast.makeText(activity, "6666", Toast.LENGTH_LONG).show());
+                    }
+                    else {
+                        activity.runOnUiThread(() -> Toast.makeText(activity, resStr, Toast.LENGTH_LONG).show());
+                    }
+                } catch (JSONException ignored) {}
+            }
+        });
     }
 
     private void updateAvatar() {
