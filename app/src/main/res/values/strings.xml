@@ -28,6 +28,7 @@
     <string name="sharedPreFile_login">login</string>
     <string name="my_publish">已发布</string>
     <string name="my_accept">待完成</string>
+    <string name="my_confirm">待确认</string>
     <string name="my_finish">已完成</string>
     <string name="my_nickname">未登录</string>
     <string name="balance">余额</string>

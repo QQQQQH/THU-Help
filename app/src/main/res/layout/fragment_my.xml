@@ -112,7 +112,8 @@
                     android:text="@string/my_publish"
                     android:textSize="@dimen/text_mid"
                     android:textColor="@color/colorPrimary"
-                    android:drawableTop="@drawable/ic_assignment_36dp"
+                    android:drawableTop="@drawable/ic_publish"
+                    android:drawablePadding="@dimen/icon_text_padding"
                     android:background="@android:color/transparent" />
 
                 <Button
@@ -124,7 +125,21 @@
                     android:text="@string/my_accept"
                     android:textSize="@dimen/text_mid"
                     android:textColor="@color/colorPrimary"
-                    android:drawableTop="@drawable/ic_assignment_returned_36dp"
+                    android:drawableTop="@drawable/ic_accept"
+                    android:drawablePadding="@dimen/icon_text_padding"
+                    android:background="@android:color/transparent" />
+
+                <Button
+                    android:id="@+id/buttonMyConfirm"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:layout_weight="1"
+                    android:text="@string/my_confirm"
+                    android:textSize="@dimen/text_mid"
+                    android:textColor="@color/colorPrimary"
+                    android:drawableTop="@drawable/ic_confirm"
+                    android:drawablePadding="@dimen/icon_text_padding"
                     android:background="@android:color/transparent" />
 
                 <Button
@@ -136,7 +151,8 @@
                     android:text="@string/my_finish"
                     android:textSize="@dimen/text_mid"
                     android:textColor="@color/colorPrimary"
-                    android:drawableTop="@drawable/ic_assignment_turned_in_36dp"
+                    android:drawableTop="@drawable/ic_finish"
+                    android:drawablePadding="@dimen/icon_text_padding"
                     android:background="@android:color/transparent" />
             </LinearLayout>
         </RelativeLayout>
