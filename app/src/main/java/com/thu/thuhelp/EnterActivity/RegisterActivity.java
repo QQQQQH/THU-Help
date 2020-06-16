@@ -57,7 +57,7 @@ public class RegisterActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void onRegistClick(View view) {
+    public void onRegisterClick(View view) {
         sid = editTextSid.getText().toString();
         password = editTextPassword.getText().toString();
         nickname = editTextNickname.getText().toString();

@@ -59,8 +59,9 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
-                    android:layout_weight="0.6"
+                    android:layout_weight="0.5"
                     android:gravity="center_horizontal|center_vertical"
+                    android:textSize="@dimen/text_mid"
                     android:text="@string/balance" />
 
                 <TextView
@@ -70,6 +71,7 @@
                     android:layout_margin="5dp"
                     android:layout_weight="1"
                     android:gravity="center_horizontal|center_vertical"
+                    android:textSize="@dimen/text_balance"
                     android:text="@string/my_balance" />
 
                 <Button
@@ -77,16 +79,20 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
-                    android:layout_weight="1.5"
-                    android:text="@string/deposit" />
+                    android:layout_weight="0.6"
+                    android:text="@string/deposit"
+                    android:textSize="@dimen/text_mid"
+                    android:background="@android:color/transparent" />
 
                 <Button
                     android:id="@+id/buttonCash"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
-                    android:layout_weight="1.5"
-                    android:text="@string/cash" />
+                    android:layout_weight="0.6"
+                    android:text="@string/cash"
+                    android:textSize="@dimen/text_mid"
+                    android:background="@android:color/transparent" />
             </LinearLayout>
 
             <LinearLayout
@@ -103,7 +109,11 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
                     android:layout_weight="1"
-                    android:text="@string/my_publish" />
+                    android:text="@string/my_publish"
+                    android:textSize="@dimen/text_mid"
+                    android:textColor="@color/colorPrimary"
+                    android:drawableTop="@drawable/ic_assignment_36dp"
+                    android:background="@android:color/transparent" />
 
                 <Button
                     android:id="@+id/buttonMyAccept"
@@ -111,7 +121,11 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
                     android:layout_weight="1"
-                    android:text="@string/my_accept" />
+                    android:text="@string/my_accept"
+                    android:textSize="@dimen/text_mid"
+                    android:textColor="@color/colorPrimary"
+                    android:drawableTop="@drawable/ic_assignment_returned_36dp"
+                    android:background="@android:color/transparent" />
 
                 <Button
                     android:id="@+id/buttonMyFinish"
@@ -119,7 +133,11 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
                     android:layout_weight="1"
-                    android:text="@string/my_finish" />
+                    android:text="@string/my_finish"
+                    android:textSize="@dimen/text_mid"
+                    android:textColor="@color/colorPrimary"
+                    android:drawableTop="@drawable/ic_assignment_turned_in_36dp"
+                    android:background="@android:color/transparent" />
             </LinearLayout>
         </RelativeLayout>
     </androidx.cardview.widget.CardView>
@@ -129,19 +147,21 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/buttonRegister"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
+        android:layout_marginHorizontal="10dp"
         android:layout_marginBottom="24dp"
+        android:textColor="@drawable/button_text_custom_reverse"
+        android:background="@drawable/button_custom_reverse"
         android:text="@string/login" />
 
     <Button
         android:id="@+id/buttonRegister"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/buttonLogout"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginHorizontal="10dp"
         android:layout_marginBottom="24dp"
+        android:textColor="@drawable/button_text_custom"
+        android:background="@drawable/button_custom"
         android:text="@string/register" />
 
     <Button
@@ -149,11 +169,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
+        android:layout_marginHorizontal="10dp"
         android:layout_marginBottom="24dp"
         android:text="@string/logout"
+        android:textColor="@drawable/button_text_custom"
+        android:background="@drawable/button_custom"
         android:visibility="invisible" />
-
-
 </RelativeLayout>
