@@ -193,11 +193,44 @@ public class DealInfoActivity extends AppCompatActivity {
                     JSONObject res = new JSONObject(resStr);
                     int statusCode = res.getInt("status");
                     if (statusCode == 200) {
+                        runOnUiThread(() -> Toast.makeText(app, R.string.delete_deal_success, Toast.LENGTH_SHORT).show());
                         Intent intent = new Intent();
                         setResult(RESULT_OK, intent);
                         finish();
                     } else {
-                        runOnUiThread(() -> Toast.makeText(DealInfoActivity.this, R.string.delete_deal_fail, Toast.LENGTH_SHORT).show());
+                        runOnUiThread(() -> Toast.makeText(app, R.string.delete_deal_fail, Toast.LENGTH_SHORT).show());
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    private void onFinishClick() {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("skey", app.getSkey());
+        params.put("did", deal.did);
+        CommonInterface.sendOkHttpGetRequest("/user/deal/confirm", params, new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                Log.e("error", e.toString());
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                final String resStr = response.body().string();
+                Log.e("response", resStr);
+                try {
+                    JSONObject res = new JSONObject(resStr);
+                    int statusCode = res.getInt("status");
+                    if (statusCode == 200) {
+                        runOnUiThread(() -> Toast.makeText(DealInfoActivity.this, R.string.finish_deal_success, Toast.LENGTH_SHORT).show());
+                        Intent intent = new Intent();
+                        setResult(RESULT_OK, intent);
+                        finish();
+                    } else {
+                        runOnUiThread(() -> Toast.makeText(DealInfoActivity.this, R.string.finish_deal_fail, Toast.LENGTH_SHORT).show());
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -207,12 +240,68 @@ public class DealInfoActivity extends AppCompatActivity {
     }
 
     private void onConfirmClick() {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("skey", app.getSkey());
+        params.put("did", deal.did);
+        CommonInterface.sendOkHttpGetRequest("/user/deal/confirm", params, new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                Log.e("error", e.toString());
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                final String resStr = response.body().string();
+                Log.e("response", resStr);
+                try {
+                    JSONObject res = new JSONObject(resStr);
+                    int statusCode = res.getInt("status");
+                    if (statusCode == 200) {
+                        runOnUiThread(() -> Toast.makeText(DealInfoActivity.this, R.string.confirm_deal_success, Toast.LENGTH_SHORT).show());
+                        Intent intent = new Intent();
+                        setResult(RESULT_OK, intent);
+                        finish();
+                    } else {
+                        runOnUiThread(() -> Toast.makeText(DealInfoActivity.this, R.string.confirm_deal_fail, Toast.LENGTH_SHORT).show());
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
-    private void onFinishClick() {
-    }
 
     private void onGiveUpClick() {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("skey", app.getSkey());
+        params.put("did", deal.did);
+        CommonInterface.sendOkHttpGetRequest("/user/deal/giveup", params, new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                Log.e("error", e.toString());
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                final String resStr = response.body().string();
+                Log.e("response", resStr);
+                try {
+                    JSONObject res = new JSONObject(resStr);
+                    int statusCode = res.getInt("status");
+                    if (statusCode == 200) {
+                        runOnUiThread(() -> Toast.makeText(DealInfoActivity.this, R.string.giveup_deal_success, Toast.LENGTH_SHORT).show());
+                        Intent intent = new Intent();
+                        setResult(RESULT_OK, intent);
+                        finish();
+                    } else {
+                        runOnUiThread(() -> Toast.makeText(DealInfoActivity.this, R.string.giveup_deal_fail, Toast.LENGTH_SHORT).show());
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
 

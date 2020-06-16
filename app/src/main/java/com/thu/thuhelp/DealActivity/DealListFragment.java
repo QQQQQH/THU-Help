@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -187,5 +189,15 @@ public class DealListFragment extends Fragment {
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == AppCompatActivity.RESULT_OK) {
+            dealList.remove(clickedPosition);
+            adapter.notifyDataSetChanged();
+            updateDealList();
+        }
     }
 }
