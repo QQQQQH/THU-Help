@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.thu.thuhelp.App;
 import com.thu.thuhelp.MainActivity.MissionListAdapter;
+import com.thu.thuhelp.MainActivity.MyFragment;
 import com.thu.thuhelp.R;
 import com.thu.thuhelp.utils.CommonInterface;
 import com.thu.thuhelp.utils.Deal;
@@ -41,17 +42,36 @@ public class DealListActivity extends AppCompatActivity {
     private MissionListAdapter adapter;
     private int clickedPosition;
 
+    private String extraKey;
+    private int requestInfo;
+
     static private int
-            REQUEST_INFO_PUBLISHED = 0,
-            REQUEST_INFO_IN_PROGRESS = 1,
-            REQUEST_INFO_COMPLETED = 2;
+            REQUEST_INFO_MY_PUBLISH = 0,
+            REQUEST_INFO_MY_ACCEPT = 1,
+            REQUEST_INFO_MY_FINISH = 2;
     public static final String
-            EXTRA_DEAL_PUBLISHED = "com.thu.thuhelp.DealActivity.DealListActivity.extra.deal.published";
+            EXTRA_DEAL_MY_PUBLISH = "com.thu.thuhelp.DealActivity.DealListActivity.extra.deal_my_publish",
+            EXTRA_DEAL_MY_ACCEPT = "com.thu.thuhelp.DealActivity.DealListActivity.extra.deal_my_accept",
+            EXTRA_DEAL_MY_FINISH = "com.thu.thuhelp.DealActivity.DealListActivity.extra.deal_my_finish";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_deal_list);
+
+        Intent intent = getIntent();
+        int dealListType = intent.getIntExtra(MyFragment.EXTRA_DEAL_LIST_TYPE, MyFragment.MY_PUBLISH);
+        switch (dealListType) {
+            case MyFragment.MY_PUBLISH:
+                extraKey = EXTRA_DEAL_MY_PUBLISH;
+                requestInfo = REQUEST_INFO_MY_PUBLISH;
+            case MyFragment.MY_ACCEPT:
+                extraKey = EXTRA_DEAL_MY_ACCEPT;
+                requestInfo = REQUEST_INFO_MY_ACCEPT;
+            case MyFragment.MY_FINISH:
+                extraKey = EXTRA_DEAL_MY_FINISH;
+                requestInfo = REQUEST_INFO_MY_FINISH;
+        }
 
         app = (App) getApplication();
 
@@ -97,8 +117,8 @@ public class DealListActivity extends AppCompatActivity {
             clickedPosition = position;
             Deal deal = dealList.get(position);
             Intent intent = new Intent(this, DealInfoActivity.class);
-            intent.putExtra(EXTRA_DEAL_PUBLISHED, deal);
-            startActivityForResult(intent, REQUEST_INFO_PUBLISHED);
+            intent.putExtra(extraKey, deal);
+            startActivityForResult(intent, requestInfo);
         });
     }
 
@@ -151,7 +171,7 @@ public class DealListActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == AppCompatActivity.RESULT_OK) {
-            if (requestCode == REQUEST_INFO_PUBLISHED) {
+            if (requestCode == REQUEST_INFO_MY_PUBLISH) {
                 Toast.makeText(this, R.string.delete_deal_success, Toast.LENGTH_SHORT).show();
                 dealList.remove(clickedPosition);
                 adapter.notifyDataSetChanged();

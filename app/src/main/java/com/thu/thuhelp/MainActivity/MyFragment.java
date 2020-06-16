@@ -59,6 +59,13 @@ public class MyFragment extends Fragment {
         // Required empty public constructor
     }
 
+    public static final String
+            EXTRA_DEAL_LIST_TYPE = "com.thu.thuhelp.MainActivity.MyFragment.extra.deal_list_type";
+    public static final int
+            MY_PUBLISH = 0,
+            MY_ACCEPT = 1,
+            MY_FINISH = 2;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -99,6 +106,7 @@ public class MyFragment extends Fragment {
 
         view.findViewById(R.id.buttonMyPublish).setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), DealListActivity.class);
+            intent.putExtra(EXTRA_DEAL_LIST_TYPE, MY_PUBLISH);
             startActivity(intent);
         });
     }

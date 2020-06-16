@@ -44,7 +44,7 @@ public class DealInfoActivity extends AppCompatActivity {
     private Button button;
 
     private enum Type {
-        Accept, Delete;
+        Publish, MyPublish, MyAccept, MyFinish;
     }
 
     private Type type;
@@ -63,13 +63,20 @@ public class DealInfoActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         if ((deal = intent.getParcelableExtra(MainFragment.EXTRA_DEAL)) != null) {
-            type = Type.Accept;
+            type = Type.Publish;
             String buttonText = "接收任务";
             setView(buttonText);
-        } else if ((deal = intent.getParcelableExtra(DealListActivity.EXTRA_DEAL_PUBLISHED)) != null) {
-            type = Type.Delete;
+        } else if ((deal = intent.getParcelableExtra(DealListActivity.EXTRA_DEAL_MY_PUBLISH)) != null) {
+            type = Type.MyPublish;
             String buttonText = "删除任务";
             setView(buttonText);
+        } else if ((deal = intent.getParcelableExtra(DealListActivity.EXTRA_DEAL_MY_ACCEPT)) != null) {
+            type = Type.MyAccept;
+            String buttonText = "放弃任务";
+            setView(buttonText);
+        } else if ((deal = intent.getParcelableExtra(DealListActivity.EXTRA_DEAL_MY_FINISH)) != null) {
+            type = Type.MyFinish;
+            button.setVisibility(View.GONE);
         }
     }
 
@@ -106,10 +113,12 @@ public class DealInfoActivity extends AppCompatActivity {
     }
 
     public void onButtonClick(View view) {
-        if (type == Type.Accept) {
+        if (type == Type.Publish) {
             onAcceptClick();
-        } else if (type == Type.Delete) {
+        } else if (type == Type.MyPublish) {
             onDeletetClick();
+        } else if (type == Type.MyAccept) {
+            onGiveUpClick();
         }
     }
 
@@ -173,5 +182,9 @@ public class DealInfoActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void onGiveUpClick() {
+
     }
 }
