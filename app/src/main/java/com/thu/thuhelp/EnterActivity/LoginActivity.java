@@ -80,7 +80,6 @@ public class LoginActivity extends AppCompatActivity {
                     JSONObject jsonObject = new JSONObject(resStr);
                     int statusCode = jsonObject.getInt("status");
                     if (statusCode == 200) {
-                        Intent intent = new Intent();
 
                         // set skey
                         App app = (App) getApplication();
@@ -94,6 +93,7 @@ public class LoginActivity extends AppCompatActivity {
                         preferencesEditor.putString(getString(R.string.password), password);
                         preferencesEditor.apply();
 
+                        Intent intent = new Intent();
                         setResult(RESULT_OK, intent);
                         finish();
                     } else {

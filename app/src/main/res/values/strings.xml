@@ -47,4 +47,6 @@
     <string name="login_fail">登录失败</string>
     <string name="get_deal_list_fail">获取任务列表失败</string>
     <string name="logout">退出登录</string>
+    <string name="accept_deal_success">接收任务成功</string>
+    <string name="accept_deal_fail">接受任务失败</string>
 </resources>

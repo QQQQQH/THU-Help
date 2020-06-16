@@ -1,15 +1,27 @@
 package com.thu.thuhelp.utils;
 
 import android.util.Log;
+import android.widget.Toast;
 
+import com.thu.thuhelp.R;
+
+import org.jetbrains.annotations.NotNull;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Objects;
 
+import okhttp3.Call;
+import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class CommonInterface {
     private static final String server_url = "http://123.57.140.189:80";
@@ -22,7 +34,7 @@ public class CommonInterface {
         OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
         HttpUrl.Builder urlBuilder = Objects.requireNonNull(HttpUrl.parse(server_url + url)).newBuilder();
         if (params != null) {
-            for (String key: params.keySet()) {
+            for (String key : params.keySet()) {
                 urlBuilder.addQueryParameter(key, params.get(key));
             }
         }
@@ -50,3 +62,4 @@ public class CommonInterface {
         okHttpClient.newCall(request).enqueue(callback);
     }
 }
+

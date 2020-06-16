@@ -204,7 +204,7 @@ public class MyFragment extends Fragment {
                     if (statusCode == 200) {
                         updateUserInfo();
                     } else {
-                        Toast.makeText(activity, resStr, Toast.LENGTH_LONG).show();
+                        Toast.makeText(activity, resStr, Toast.LENGTH_SHORT).show();
                     }
                 } catch (JSONException ignored) {}
             }
@@ -238,7 +238,7 @@ public class MyFragment extends Fragment {
                     if (statusCode == 200) {
                         updateUserInfo();
                     } else {
-                        Toast.makeText(activity, resStr, Toast.LENGTH_LONG).show();
+                        Toast.makeText(activity, resStr, Toast.LENGTH_SHORT).show();
                     }
                 } catch (JSONException ignored) {}
             }
@@ -286,7 +286,7 @@ public class MyFragment extends Fragment {
                             } catch (JSONException ignored) {}
                         });
                     } else {
-                        Toast.makeText(activity, resStr, Toast.LENGTH_LONG).show();
+                        Toast.makeText(activity, resStr, Toast.LENGTH_SHORT).show();
                     }
                 } catch (JSONException ignored) {}
             }
