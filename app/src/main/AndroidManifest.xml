@@ -13,7 +13,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".DealActivity.DealInfoActivity"></activity>
+        <activity android:name=".DealActivity.DealListActivity"></activity>
+        <activity android:name=".DealActivity.DealInfoActivity" />
         <activity
             android:name=".DealActivity.PublishDealActivity"
             android:label="@string/publish_deal" />

@@ -57,7 +57,7 @@ public class MainFragment extends Fragment {
             REQUEST_PUBLISH = 0,
             REQUEST_INFO = 1;
 
-    public static final String EXTRA_DEAL = "com.thu.thuhelp.extra.deal";
+    public static final String EXTRA_DEAL = "com.thu.thuhelp.MainActivity.MainFragment.extra.deal";
 
     public MainFragment() {
         // Required empty public constructor
@@ -179,10 +179,10 @@ public class MainFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == AppCompatActivity.RESULT_OK) {
             if (requestCode == REQUEST_PUBLISH) {
-                Toast.makeText(getActivity(), R.string.publish_success, Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity, R.string.publish_success, Toast.LENGTH_SHORT).show();
                 updateDealList();
             } else if (requestCode == REQUEST_INFO) {
-                Toast.makeText(getContext(), R.string.accept_deal_success, Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity, R.string.accept_deal_success, Toast.LENGTH_SHORT).show();
                 dealList.remove(clickedPosition);
                 adapter.notifyDataSetChanged();
                 updateDealList();

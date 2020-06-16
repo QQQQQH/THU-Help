@@ -19,7 +19,6 @@ import com.thu.thuhelp.utils.CommonInterface;
 import com.thu.thuhelp.utils.Deal;
 
 import org.jetbrains.annotations.NotNull;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -44,11 +43,11 @@ public class DealInfoActivity extends AppCompatActivity {
             textViewShowEndTime;
     private Button button;
 
-    private enum ComeFrom {
-        mainFragment;
+    private enum Type {
+        Accept, Delete;
     }
 
-    private ComeFrom comeFrom;
+    private Type type;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,10 +62,13 @@ public class DealInfoActivity extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         Intent intent = getIntent();
-        deal = intent.getParcelableExtra(MainFragment.EXTRA_DEAL);
-        if (deal != null) {
-            comeFrom = ComeFrom.mainFragment;
+        if ((deal = intent.getParcelableExtra(MainFragment.EXTRA_DEAL)) != null) {
+            type = Type.Accept;
             String buttonText = "接收任务";
+            setView(buttonText);
+        } else if ((deal = intent.getParcelableExtra(DealListActivity.EXTRA_DEAL_PUBLISHED)) != null) {
+            type = Type.Delete;
+            String buttonText = "删除任务";
             setView(buttonText);
         }
     }
@@ -104,12 +106,14 @@ public class DealInfoActivity extends AppCompatActivity {
     }
 
     public void onButtonClick(View view) {
-        if (comeFrom == ComeFrom.mainFragment) {
-            onAcceptClick(view);
+        if (type == Type.Accept) {
+            onAcceptClick();
+        } else if (type == Type.Delete) {
+            onDeletetClick();
         }
     }
 
-    private void onAcceptClick(View view) {
+    private void onAcceptClick() {
         HashMap<String, String> params = new HashMap<>();
         params.put("skey", app.getSkey());
         params.put("did", deal.did);
@@ -132,6 +136,37 @@ public class DealInfoActivity extends AppCompatActivity {
                         finish();
                     } else {
                         runOnUiThread(() -> Toast.makeText(DealInfoActivity.this, R.string.accept_deal_fail, Toast.LENGTH_SHORT).show());
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    private void onDeletetClick() {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("skey", app.getSkey());
+        params.put("did", deal.did);
+        CommonInterface.sendOkHttpGetRequest("/user/deal/delete", params, new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                Log.e("error", e.toString());
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                final String resStr = response.body().string();
+                Log.e("response", resStr);
+                try {
+                    JSONObject res = new JSONObject(resStr);
+                    int statusCode = res.getInt("status");
+                    if (statusCode == 200) {
+                        Intent intent = new Intent();
+                        setResult(RESULT_OK, intent);
+                        finish();
+                    } else {
+                        runOnUiThread(() -> Toast.makeText(DealInfoActivity.this, R.string.delete_deal_fail, Toast.LENGTH_SHORT).show());
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

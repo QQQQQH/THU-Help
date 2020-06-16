@@ -1,12 +1,6 @@
 package com.thu.thuhelp.MainActivity;
 
-import android.annotation.SuppressLint;
-import android.app.AlertDialog;
-import android.app.Application;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -14,30 +8,23 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
-import android.text.InputFilter;
 import android.text.InputType;
-import android.text.SpannableStringBuilder;
-import android.text.Spanned;
-import android.text.method.DigitsKeyListener;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.thu.thuhelp.App;
+import com.thu.thuhelp.DealActivity.DealListActivity;
 import com.thu.thuhelp.R;
 import com.thu.thuhelp.EnterActivity.LoginActivity;
 import com.thu.thuhelp.EnterActivity.RegisterActivity;
 import com.thu.thuhelp.utils.CommonInterface;
 
 import org.jetbrains.annotations.NotNull;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -106,6 +93,11 @@ public class MyFragment extends Fragment {
         view.findViewById(R.id.buttonDeposit).setOnClickListener(v -> {
             showDepositDialog();
         });
+
+        view.findViewById(R.id.buttonMyPublish).setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), DealListActivity.class);
+            startActivity(intent);
+        });
     }
 
     @Override
@@ -165,12 +157,10 @@ public class MyFragment extends Fragment {
         if (value == null || value.equals("")) {
             buildInfoDialog("金额不能为空").show();
             return false;
-        }
-        else if (Double.parseDouble(value) == 0) {
+        } else if (Double.parseDouble(value) == 0) {
             buildInfoDialog("金额不能为零").show();
             return false;
-        }
-        else if (value.contains(".") && value.length() - value.indexOf(".") > 3) {
+        } else if (value.contains(".") && value.length() - value.indexOf(".") > 3) {
             buildInfoDialog("仅限两位小数").show();
             return false;
         }
@@ -206,7 +196,8 @@ public class MyFragment extends Fragment {
                     } else {
                         Toast.makeText(activity, resStr, Toast.LENGTH_SHORT).show();
                     }
-                } catch (JSONException ignored) {}
+                } catch (JSONException ignored) {
+                }
             }
         });
     }
@@ -240,7 +231,8 @@ public class MyFragment extends Fragment {
                     } else {
                         Toast.makeText(activity, resStr, Toast.LENGTH_SHORT).show();
                     }
-                } catch (JSONException ignored) {}
+                } catch (JSONException ignored) {
+                }
             }
         });
     }
@@ -283,12 +275,14 @@ public class MyFragment extends Fragment {
                                 view.findViewById(R.id.buttonRegister).setVisibility(View.INVISIBLE);
                                 ((TextView) view.findViewById(R.id.nickname_label)).setText(userInfo.getString("nickname"));
                                 ((TextView) view.findViewById(R.id.balance_label)).setText(userInfo.getString("balance"));
-                            } catch (JSONException ignored) {}
+                            } catch (JSONException ignored) {
+                            }
                         });
                     } else {
                         Toast.makeText(activity, resStr, Toast.LENGTH_SHORT).show();
                     }
-                } catch (JSONException ignored) {}
+                } catch (JSONException ignored) {
+                }
             }
         });
     }
