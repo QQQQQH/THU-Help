@@ -13,9 +13,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -60,11 +57,12 @@ public class MyFragment extends Fragment {
     }
 
     public static final String
-            EXTRA_DEAL_LIST_TYPE = "com.thu.thuhelp.MainActivity.MyFragment.extra.deal_list_type";
+            EXTRA_DEAL_STATE = "com.thu.thuhelp.MainActivity.MyFragment.extra.deal_state";
     public static final int
-            MY_PUBLISH = 0,
-            MY_ACCEPT = 1,
-            MY_FINISH = 2;
+            DEAL_PUBLISH = 0,
+            DEAL_ACCEPT = 1,
+            DEAL_CONFIRM = 2,
+            DEAL_FINISH = 3;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -105,10 +103,29 @@ public class MyFragment extends Fragment {
         });
 
         view.findViewById(R.id.buttonMyPublish).setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), DealListActivity.class);
-            intent.putExtra(EXTRA_DEAL_LIST_TYPE, MY_PUBLISH);
+            Intent intent = new Intent(activity, DealListActivity.class);
+            intent.putExtra(EXTRA_DEAL_STATE, DEAL_PUBLISH);
             startActivity(intent);
         });
+
+        view.findViewById(R.id.buttonMyAccept).setOnClickListener(v -> {
+            Intent intent = new Intent(activity, DealListActivity.class);
+            intent.putExtra(EXTRA_DEAL_STATE, DEAL_ACCEPT);
+            startActivity(intent);
+        });
+
+        view.findViewById(R.id.buttonMyConfirm).setOnClickListener(v -> {
+            Intent intent = new Intent(activity, DealListActivity.class);
+            intent.putExtra(EXTRA_DEAL_STATE, DEAL_CONFIRM);
+            startActivity(intent);
+        });
+
+        view.findViewById(R.id.buttonMyFinish).setOnClickListener(v -> {
+            Intent intent = new Intent(activity, DealListActivity.class);
+            intent.putExtra(EXTRA_DEAL_STATE, DEAL_FINISH);
+            startActivity(intent);
+        });
+
     }
 
     @Override

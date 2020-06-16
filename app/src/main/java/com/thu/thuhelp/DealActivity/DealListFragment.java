@@ -1,12 +1,10 @@
-package com.thu.thuhelp.MainActivity;
+package com.thu.thuhelp.DealActivity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -20,8 +18,8 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.thu.thuhelp.App;
-import com.thu.thuhelp.DealActivity.DealInfoActivity;
-import com.thu.thuhelp.DealActivity.PublishDealActivity;
+import com.thu.thuhelp.MainActivity.MissionListAdapter;
+import com.thu.thuhelp.MainActivity.MyFragment;
 import com.thu.thuhelp.R;
 import com.thu.thuhelp.utils.CommonInterface;
 import com.thu.thuhelp.utils.Deal;
@@ -39,78 +37,94 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
-
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MainFragment extends Fragment {
+public class DealListFragment extends Fragment {
     private final LinkedList<Deal> dealList = new LinkedList<>();
     private RecyclerView recyclerViewDeal;
     private MissionListAdapter adapter;
     private App app;
-    private MainActivity activity;
+    private DealListActivity activity;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private int state, init;
     private int clickedPosition;
+    private int dealType;
 
-    static private int
-            REQUEST_PUBLISH = 0,
-            REQUEST_INFO = 1;
+    public static final String
+            EXTRA_DEAL = "com.thu.thuhelp.DealActivity.DealListFragment.extra.deal",
+            EXTRA_DEAL_TYPE = "com.thu.thuhelp.DealActivity.DealListFragment.extra.deal_type";
 
-    public static final String EXTRA_DEAL = "com.thu.thuhelp.MainActivity.MainFragment.extra.deal";
+    public static final int
+            DEAL_ALL_PUBLISH = -1,
+            DEAL_MY_PUBLISH = 0,
+            DEAL_MY_ACCEPT = 1,
+            DEAL_OTHERS_ACCEPT = 2,
+            DEAL_MY_CONFIRM = 3,
+            DEAL_OTHERS_CONFIRM = 4,
+            DEAL_MY_FINISH = 5,
+            DEAL_OTHERS_FINISH = 6;
 
-    public MainFragment() {
-        // Required empty public constructor
+    public DealListFragment(int state, int init) {
+        this.state = state;
+        this.init = init;
+        if (init == DealListActivity.INIT_YES) {
+            switch (state) {
+                case MyFragment.DEAL_PUBLISH:
+                    dealType = DEAL_MY_PUBLISH;
+                    break;
+                case MyFragment.DEAL_ACCEPT:
+                    dealType = DEAL_MY_ACCEPT;
+                    break;
+                case MyFragment.DEAL_CONFIRM:
+                    dealType = DEAL_MY_CONFIRM;
+                    break;
+                case MyFragment.DEAL_FINISH:
+                    dealType = DEAL_MY_FINISH;
+                    break;
+            }
+        } else {
+            switch (state) {
+                case MyFragment.DEAL_ACCEPT:
+                    dealType = DEAL_OTHERS_ACCEPT;
+                    break;
+                case MyFragment.DEAL_CONFIRM:
+                    dealType = DEAL_OTHERS_CONFIRM;
+                    break;
+                case MyFragment.DEAL_FINISH:
+                    dealType = DEAL_OTHERS_FINISH;
+                    break;
+            }
+        }
     }
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        activity = (MainActivity) getActivity();
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        activity = (DealListActivity) getActivity();
         assert activity != null;
         app = (App) activity.getApplication();
-
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_main, container, false);
+        return inflater.inflate(R.layout.fragment_deal_list, container, false);
     }
 
     @SuppressLint("DefaultLocale")
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanced) {
         super.onViewCreated(view, savedInstanced);
-        swipeRefreshLayout = activity.findViewById(R.id.swipeRefreshLayout);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                Toast.makeText(activity, R.string.please_login, Toast.LENGTH_SHORT).show();
-                swipeRefreshLayout.setRefreshing(false);
-            }
-        });
-    }
-
-    public void setView() {
-        // set fab
-        activity.findViewById(R.id.fabPublishDeal).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(activity, PublishDealActivity.class);
-                startActivityForResult(intent, REQUEST_PUBLISH);
-            }
-        });
 
         // set swipe refresh layout
+        swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 updateDealList();
             }
         });
-        setRecyclerView();
-    }
-
-    private void setRecyclerView() {
 
         // set recycler view
-        recyclerViewDeal = activity.findViewById(R.id.recyclerViewDeal);
+        recyclerViewDeal = view.findViewById(R.id.recyclerViewDeal);
         adapter = new MissionListAdapter(activity, dealList);
 
         recyclerViewDeal.setAdapter(adapter);
@@ -119,21 +133,24 @@ public class MainFragment extends Fragment {
 
         updateDealList();
 
-        adapter.setOnItemClickListener((view, position) -> {
-//            Toast.makeText(activity, "Clicked " + position, Toast.LENGTH_SHORT).show();
+        adapter.setOnItemClickListener((v, position) -> {
             clickedPosition = position;
             Deal deal = dealList.get(position);
             Intent intent = new Intent(activity, DealInfoActivity.class);
             intent.putExtra(EXTRA_DEAL, deal);
-            startActivityForResult(intent, REQUEST_INFO);
+            intent.putExtra(EXTRA_DEAL_TYPE, dealType);
+            startActivityForResult(intent, dealType);
         });
     }
 
     private void updateDealList() {
         HashMap<String, String> params = new HashMap<>();
         params.put("skey", app.getSkey());
+        params.put("state", String.valueOf(state));
+        params.put("init", String.valueOf(init));
 
         swipeRefreshLayout.setRefreshing(true);
+
         CommonInterface.sendOkHttpGetRequest("/user/deal/list", params, new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
@@ -170,23 +187,5 @@ public class MainFragment extends Fragment {
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
-    }
-
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == AppCompatActivity.RESULT_OK) {
-            if (requestCode == REQUEST_PUBLISH) {
-                Toast.makeText(activity, R.string.publish_success, Toast.LENGTH_SHORT).show();
-                updateDealList();
-            } else if (requestCode == REQUEST_INFO) {
-                Toast.makeText(activity, R.string.accept_deal_success, Toast.LENGTH_SHORT).show();
-                dealList.remove(clickedPosition);
-                adapter.notifyDataSetChanged();
-                updateDealList();
-            }
-        }
-
     }
 }

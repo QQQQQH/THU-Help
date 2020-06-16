@@ -41,13 +41,9 @@ public class DealInfoActivity extends AppCompatActivity {
             textViewShowBonus,
             textViewShowStartTime,
             textViewShowEndTime;
-    private Button button;
+    private Button button1, button2;
 
-    private enum Type {
-        Publish, MyPublish, MyAccept, MyFinish;
-    }
-
-    private Type type;
+    private int dealType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,22 +58,28 @@ public class DealInfoActivity extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         Intent intent = getIntent();
-        if ((deal = intent.getParcelableExtra(MainFragment.EXTRA_DEAL)) != null) {
-            type = Type.Publish;
-            String buttonText = "接收任务";
-            setView(buttonText);
-        } else if ((deal = intent.getParcelableExtra(DealListActivity.EXTRA_DEAL_MY_PUBLISH)) != null) {
-            type = Type.MyPublish;
-            String buttonText = "删除任务";
-            setView(buttonText);
-        } else if ((deal = intent.getParcelableExtra(DealListActivity.EXTRA_DEAL_MY_ACCEPT)) != null) {
-            type = Type.MyAccept;
-            String buttonText = "放弃任务";
-            setView(buttonText);
-        } else if ((deal = intent.getParcelableExtra(DealListActivity.EXTRA_DEAL_MY_FINISH)) != null) {
-            type = Type.MyFinish;
-            button.setVisibility(View.GONE);
+        dealType = intent.getIntExtra(DealListFragment.EXTRA_DEAL_TYPE, -1);
+
+        String buttonText1 = null, buttonText2 = null;
+        if (dealType == DealListFragment.DEAL_ALL_PUBLISH) {
+            deal = intent.getParcelableExtra(MainFragment.EXTRA_DEAL);
+            buttonText1 = "接收任务";
+        } else {
+            deal = intent.getParcelableExtra(DealListFragment.EXTRA_DEAL);
+            switch (dealType) {
+                case DealListFragment.DEAL_MY_PUBLISH:
+                    buttonText1 = "删除任务";
+                    break;
+                case DealListFragment.DEAL_OTHERS_ACCEPT:
+                    buttonText1 = "完成任务";
+                    buttonText2 = "放弃任务";
+                    break;
+                case DealListFragment.DEAL_MY_CONFIRM:
+                    buttonText1 = "确认完成";
+                    break;
+            }
         }
+        setView(buttonText1, buttonText2);
     }
 
     // set return actionBar
@@ -90,7 +92,7 @@ public class DealInfoActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void setView(String buttonText) {
+    private void setView(String buttonText1, String buttonText2) {
         textViewShowTitle = findViewById(R.id.textViewShowTitle);
         textViewShowDescription = findViewById(R.id.textViewShowDescription);
         textViewShowName = findViewById(R.id.textViewShowName);
@@ -99,7 +101,8 @@ public class DealInfoActivity extends AppCompatActivity {
         textViewShowBonus = findViewById(R.id.textViewShowBonus);
         textViewShowStartTime = findViewById(R.id.textViewShowStartTime);
         textViewShowEndTime = findViewById(R.id.textViewShowEndTime);
-        button = findViewById(R.id.button);
+        button1 = findViewById(R.id.button1);
+        button2 = findViewById(R.id.button2);
 
         textViewShowTitle.setText(deal.title);
         textViewShowDescription.setText(deal.description);
@@ -109,17 +112,36 @@ public class DealInfoActivity extends AppCompatActivity {
         textViewShowBonus.setText(String.valueOf(deal.bonus));
         textViewShowStartTime.setText(deal.startTime);
         textViewShowEndTime.setText(deal.endTime);
-        button.setText(buttonText);
+
+        if (buttonText1 != null) {
+            button1.setText(buttonText1);
+            button1.setVisibility(View.VISIBLE);
+            if (buttonText2 != null) {
+                button2.setText(buttonText2);
+                button2.setVisibility(View.VISIBLE);
+            }
+        }
     }
 
-    public void onButtonClick(View view) {
-        if (type == Type.Publish) {
-            onAcceptClick();
-        } else if (type == Type.MyPublish) {
-            onDeletetClick();
-        } else if (type == Type.MyAccept) {
-            onGiveUpClick();
+    public void onButton1Click(View view) {
+        switch (dealType) {
+            case DealListFragment.DEAL_ALL_PUBLISH:
+                onAcceptClick();
+                break;
+            case DealListFragment.DEAL_MY_PUBLISH:
+                onDeletetClick();
+                break;
+            case DealListFragment.DEAL_OTHERS_ACCEPT:
+                onFinishClick();
+                break;
+            case DealListFragment.DEAL_MY_CONFIRM:
+                onConfirmClick();
+                break;
         }
+    }
+
+    public void onButton2Click(View view) {
+        onGiveUpClick();
     }
 
     private void onAcceptClick() {
@@ -184,7 +206,14 @@ public class DealInfoActivity extends AppCompatActivity {
         });
     }
 
-    private void onGiveUpClick() {
-
+    private void onConfirmClick() {
     }
+
+    private void onFinishClick() {
+    }
+
+    private void onGiveUpClick() {
+    }
+
+
 }
