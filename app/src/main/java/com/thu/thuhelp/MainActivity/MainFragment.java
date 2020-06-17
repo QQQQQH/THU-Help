@@ -20,6 +20,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.thu.thuhelp.App;
+import com.thu.thuhelp.ChatActivity.ChatActivity;
 import com.thu.thuhelp.DealActivity.DealInfoActivity;
 import com.thu.thuhelp.DealActivity.PublishDealActivity;
 import com.thu.thuhelp.R;
@@ -78,32 +79,26 @@ public class MainFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanced) {
         super.onViewCreated(view, savedInstanced);
         swipeRefreshLayout = activity.findViewById(R.id.swipeRefreshLayout);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                Toast.makeText(activity, R.string.please_login, Toast.LENGTH_SHORT).show();
-                swipeRefreshLayout.setRefreshing(false);
-            }
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            Toast.makeText(activity, R.string.please_login, Toast.LENGTH_SHORT).show();
+            swipeRefreshLayout.setRefreshing(false);
         });
     }
 
     public void setView() {
         // set fab
-        activity.findViewById(R.id.fabPublishDeal).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(activity, PublishDealActivity.class);
-                startActivityForResult(intent, REQUEST_PUBLISH);
-            }
+        activity.findViewById(R.id.fabPublishDeal).setOnClickListener(v -> {
+            Intent intent = new Intent(activity, PublishDealActivity.class);
+            startActivityForResult(intent, REQUEST_PUBLISH);
+        });
+
+        activity.findViewById(R.id.fabChat).setOnClickListener(v -> {
+            Intent intent = new Intent(activity, ChatActivity.class);
+            startActivity(intent);
         });
 
         // set swipe refresh layout
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                updateDealList();
-            }
-        });
+        swipeRefreshLayout.setOnRefreshListener(this::updateDealList);
         setRecyclerView();
     }
 

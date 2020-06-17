@@ -67,4 +67,5 @@
     <string name="edit_profile_success">修改个人信息成功</string>
     <string name="edit_profile_fail">修改个人信息失败</string>
     <string name="edit_profile_hint">昵称和密码置空则不更改</string>
+    <string name="private_message">私信</string>
 </resources>
