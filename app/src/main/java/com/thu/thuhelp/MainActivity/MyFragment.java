@@ -10,10 +10,12 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -40,12 +42,17 @@ import com.thu.thuhelp.EnterActivity.RegisterActivity;
 import com.thu.thuhelp.utils.CommonInterface;
 
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -397,7 +404,7 @@ public class MyFragment extends Fragment {
                     JSONObject res = new JSONObject(resStr);
                     int statusCode = res.getInt("status");
                     if (statusCode == 200) {
-                        activity.runOnUiThread(() -> Toast.makeText(activity, "6666", Toast.LENGTH_LONG).show());
+                        updateUserInfo();
                     }
                     else {
                         activity.runOnUiThread(() -> Toast.makeText(activity, resStr, Toast.LENGTH_LONG).show());
@@ -407,14 +414,18 @@ public class MyFragment extends Fragment {
         });
     }
 
-    private void updateAvatar() {
+    private void updateAvatar(boolean setDefault) {
+        if (setDefault) {
+            ((ImageView) view.findViewById(R.id.avatarView)).setImageDrawable(getResources().getDrawable(R.drawable.ic_person));
+            return;
+        }
         ContentResolver cr = activity.getContentResolver();
         try {
             Bitmap avatar = BitmapFactory.decodeStream(cr.openInputStream(Uri.fromFile(avatarFile)));
             ((ImageView) view.findViewById(R.id.avatarView)).setImageBitmap(avatar);
         }
         catch (FileNotFoundException e) {
-            e.printStackTrace();
+            Toast.makeText(activity, "更新头像失败", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -444,6 +455,7 @@ public class MyFragment extends Fragment {
                 Log.e("error", e.toString());
             }
 
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 final String resStr = response.body().string();
@@ -452,22 +464,34 @@ public class MyFragment extends Fragment {
                     int statusCode = res.getInt("status");
                     if (statusCode == 200) {
                         JSONObject userInfo = res.getJSONObject("data");
+                        String avatarString = userInfo.getString("avatar");
+                        if (!avatarString.equals("null")) {
+                            byte[] avatarBytes = Base64.getDecoder().decode(avatarString);
+                            FileOutputStream fos = new FileOutputStream(avatarFile);
+                            BufferedOutputStream bos = new BufferedOutputStream(fos);
+                            bos.write(avatarBytes);
+                            bos.close();
+                            fos.close();
+                        }
                         activity.runOnUiThread(() -> {
                             try {
                                 view.findViewById(R.id.userCardView).setVisibility(View.VISIBLE);
                                 view.findViewById(R.id.buttonLogout).setVisibility(View.VISIBLE);
                                 view.findViewById(R.id.buttonLogin).setVisibility(View.INVISIBLE);
                                 view.findViewById(R.id.buttonRegister).setVisibility(View.INVISIBLE);
+
+                                updateAvatar(avatarString.equals("null"));
                                 ((TextView) view.findViewById(R.id.nickname_label)).setText(userInfo.getString("nickname"));
                                 ((TextView) view.findViewById(R.id.balance_label)).setText(userInfo.getString("balance"));
-                            } catch (JSONException ignored) {
                             }
+                            catch (Exception ignored) {}
                         });
-                    } else {
-                        Toast.makeText(activity, resStr, Toast.LENGTH_SHORT).show();
                     }
-                } catch (JSONException ignored) {
+                    else {
+                        activity.runOnUiThread(() -> Toast.makeText(activity, resStr, Toast.LENGTH_SHORT).show());
+                    }
                 }
+                catch (JSONException ignored) {}
             }
         });
     }

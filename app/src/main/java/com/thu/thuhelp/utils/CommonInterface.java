@@ -28,6 +28,7 @@ import okhttp3.Response;
 
 public class CommonInterface {
     private static final String server_url = "http://123.57.140.189:80";
+//    private static final String server_url = "http://192.168.1.137:8000";
     private static Request request;
 
     // Get
