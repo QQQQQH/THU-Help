@@ -1,4 +1,4 @@
-package com.thu.thuhelp.EnterActivity;
+package com.thu.thuhelp.UserInfoActivity;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,7 +27,6 @@ import okhttp3.Callback;
 import okhttp3.Response;
 
 public class RegisterActivity extends AppCompatActivity {
-    static public String EXTRA_ID = "studentId", EXTRA_PW = "password";
     private EditText editTextSid, editTextPassword, editTextNickname;
     private RadioButton radioButtonMale;
     private String sid, password, nickname, gender;
@@ -85,7 +84,7 @@ public class RegisterActivity extends AppCompatActivity {
                         setResult(RESULT_OK, intent);
                         finish();
                     } else {
-                        RegisterActivity.this.runOnUiThread(() -> Toast.makeText(RegisterActivity.this, R.string.register_fail, Toast.LENGTH_SHORT).show());
+                        runOnUiThread(() -> Toast.makeText(RegisterActivity.this, R.string.register_fail, Toast.LENGTH_SHORT).show());
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
