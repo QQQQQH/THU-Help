@@ -111,8 +111,8 @@ public class MainActivity extends AppCompatActivity {
                         runOnUiThread(() -> Toast.makeText(MainActivity.this, R.string.login_success, Toast.LENGTH_SHORT).show());
                         // set skey
                         app.setSkey(jsonObject.getString("data"));
-                        mainFragmentSetView();
                         myFragmentSetView();
+                        mainFragmentSetView();
                     } else {
                         runOnUiThread(() -> Toast.makeText(MainActivity.this, R.string.login_fail, Toast.LENGTH_SHORT).show());
                     }

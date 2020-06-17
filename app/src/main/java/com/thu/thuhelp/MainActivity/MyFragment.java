@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
+import android.os.FileUtils;
 import android.provider.MediaStore;
 import android.text.InputType;
 import android.util.Log;
@@ -47,6 +48,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
@@ -184,6 +186,8 @@ public class MyFragment extends Fragment {
                     cropAvatar();
                     break;
                 case REQUEST_ALBUM:
+                    assert data != null;
+                    saveAndCropAvatar(data.getData());
                     break;
                 case REQUEST_CROP:
                     uploadAvatar();
@@ -205,7 +209,7 @@ public class MyFragment extends Fragment {
 
     private void showEditProfileDialog() {
         new MaterialDialog.Builder(activity)
-                .title("标题")
+                .title("修改信息")
                 .items(R.array.edit_profile)
                 .itemsCallback(new MaterialDialog.ListCallback() {
                     @Override
@@ -361,11 +365,14 @@ public class MyFragment extends Fragment {
                                 camera.putExtra(MediaStore.EXTRA_OUTPUT, imageURI);
                                 startActivityForResult(camera, REQUEST_CAMERA);
                             }
-                        } else if (which == 1) {
+                        }
+                        else if (which == 1) {
                             Intent album = new Intent(
                                     Intent.ACTION_PICK,
                                     android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                            startActivityForResult(album, REQUEST_ALBUM);
+                            if (album.resolveActivity(activity.getPackageManager()) != null) {
+                                startActivityForResult(album, REQUEST_ALBUM);
+                            }
                         }
                     }
                 })
@@ -381,6 +388,21 @@ public class MyFragment extends Fragment {
                 .withAspectRatio(1, 1)
                 .withMaxResultSize(150, 150)
                 .start(activity, this, REQUEST_CROP);
+    }
+
+    private void saveAndCropAvatar(Uri imageURI) {
+        ContentResolver cr = activity.getContentResolver();
+        try {
+            InputStream is = cr.openInputStream(imageURI);
+            FileOutputStream fos = new FileOutputStream(avatarTemp);
+            byte[] b = new byte[1024];
+            while (is.read(b) != -1) {
+                fos.write(b);
+            }
+            is.close();
+            fos.close();
+            cropAvatar();
+        } catch (IOException ignored) {}
     }
 
     private void uploadAvatar() {
@@ -419,7 +441,8 @@ public class MyFragment extends Fragment {
         try {
             Bitmap avatar = BitmapFactory.decodeStream(cr.openInputStream(Uri.fromFile(avatarFile)));
             ((ImageView) view.findViewById(R.id.avatarView)).setImageBitmap(avatar);
-        } catch (FileNotFoundException e) {
+        }
+        catch (FileNotFoundException e) {
             Toast.makeText(activity, "更新头像失败", Toast.LENGTH_LONG).show();
         }
     }
