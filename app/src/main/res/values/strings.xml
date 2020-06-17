@@ -63,4 +63,11 @@
     <string name="confirm_deal_fail">确认任务失败</string>
     <string name="giveup_deal_success">放弃任务成功</string>
     <string name="giveup_deal_fail">放弃任务失败</string>
+    <string name="confirm_edit_profile">确认修改</string>
+    <string name="edit_profile">修改个人信息</string>
+    <string name="edit_profile_success">修改个人信息成功</string>
+    <string name="edit_profile_fail">修改个人信息失败</string>
+    <string name="edit_profile_hint">昵称和密码置空则不更改</string>
+    <string name="private_message">私信</string>
+    <string name="query_hint">请输入搜索内容</string>
 </resources>

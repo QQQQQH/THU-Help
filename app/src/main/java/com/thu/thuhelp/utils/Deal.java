@@ -84,4 +84,13 @@ public class Deal implements Parcelable {
         dest.writeString(endTime);
         dest.writeString(did);
     }
+
+    public boolean containString(String query) {
+        query = query.toLowerCase();
+        return title.toLowerCase().contains(query) ||
+                name.toLowerCase().contains(query) ||
+                description.toLowerCase().contains(query) ||
+                address.toLowerCase().contains(query) ||
+                phone.toLowerCase().contains(query);
+    }
 }

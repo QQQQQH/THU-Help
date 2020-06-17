@@ -17,9 +17,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.thu.thuhelp.App;
+import com.thu.thuhelp.ChatActivity.ChatActivity;
 import com.thu.thuhelp.DealActivity.DealInfoActivity;
 import com.thu.thuhelp.DealActivity.PublishDealActivity;
 import com.thu.thuhelp.R;
@@ -45,11 +47,13 @@ import okhttp3.Response;
  */
 public class MainFragment extends Fragment {
     private final LinkedList<Deal> dealList = new LinkedList<>();
+    private SwipeRefreshLayout swipeRefreshLayout;
     private RecyclerView recyclerViewDeal;
     private MissionListAdapter adapter;
+    private SearchView searchView;
+
     private App app;
     private MainActivity activity;
-    private SwipeRefreshLayout swipeRefreshLayout;
     private int clickedPosition;
 
     static private int
@@ -78,33 +82,47 @@ public class MainFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanced) {
         super.onViewCreated(view, savedInstanced);
         swipeRefreshLayout = activity.findViewById(R.id.swipeRefreshLayout);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                Toast.makeText(activity, R.string.please_login, Toast.LENGTH_SHORT).show();
-                swipeRefreshLayout.setRefreshing(false);
-            }
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            Toast.makeText(activity, R.string.please_login, Toast.LENGTH_SHORT).show();
+            swipeRefreshLayout.setRefreshing(false);
         });
     }
 
     public void setView() {
         // set fab
-        activity.findViewById(R.id.fabPublishDeal).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(activity, PublishDealActivity.class);
-                startActivityForResult(intent, REQUEST_PUBLISH);
-            }
+        activity.findViewById(R.id.fabPublishDeal).setOnClickListener(v -> {
+            Intent intent = new Intent(activity, PublishDealActivity.class);
+            startActivityForResult(intent, REQUEST_PUBLISH);
+        });
+
+        activity.findViewById(R.id.fabChat).setOnClickListener(v -> {
+            Intent intent = new Intent(activity, ChatActivity.class);
+            startActivity(intent);
         });
 
         // set swipe refresh layout
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        swipeRefreshLayout.setOnRefreshListener(this::updateDealList);
+        setRecyclerView();
+
+        // set query
+        searchView = activity.findViewById(R.id.searchView);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
-            public void onRefresh() {
-                updateDealList();
+            public boolean onQueryTextSubmit(String query) {
+                searchDeal(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
             }
         });
-        setRecyclerView();
+        searchView.setOnCloseListener(() -> {
+            adapter.dealList = dealList;
+            adapter.notifyDataSetChanged();
+            return false;
+        });
     }
 
     private void setRecyclerView() {
@@ -188,5 +206,19 @@ public class MainFragment extends Fragment {
             }
         }
 
+    }
+
+    private void searchDeal(String query) {
+        if (query.equals("")) {
+            return;
+        }
+        LinkedList<Deal> searchDealList = new LinkedList<>();
+        for (Deal deal : dealList) {
+            if (deal.containString(query)) {
+                searchDealList.addLast(deal);
+            }
+        }
+        adapter.dealList = searchDealList;
+        adapter.notifyDataSetChanged();
     }
 }

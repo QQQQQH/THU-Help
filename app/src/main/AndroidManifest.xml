@@ -3,7 +3,9 @@
     package="com.thu.thuhelp">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-feature android:name="android.hardware.camera"
+
+    <uses-feature
+        android:name="android.hardware.camera"
         android:required="false" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
@@ -17,16 +19,22 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".DealActivity.DealListActivity"></activity>
+        <activity
+            android:name=".ChatActivity.ChatActivity"
+            android:label="@string/private_message" />
+        <activity
+            android:name=".UserInfoActivity.EditProfileActivity"
+            android:label="@string/edit_profile" />
+        <activity android:name=".DealActivity.DealListActivity" />
         <activity android:name=".DealActivity.DealInfoActivity" />
         <activity
             android:name=".DealActivity.PublishDealActivity"
             android:label="@string/publish_deal" />
         <activity
-            android:name=".EnterActivity.RegisterActivity"
+            android:name=".UserInfoActivity.RegisterActivity"
             android:label="@string/register" />
         <activity
-            android:name=".EnterActivity.LoginActivity"
+            android:name=".UserInfoActivity.LoginActivity"
             android:label="@string/login" />
         <activity android:name=".MainActivity.MainActivity">
             <intent-filter>

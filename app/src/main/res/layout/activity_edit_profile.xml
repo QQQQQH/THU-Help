@@ -4,17 +4,27 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".UserInfoActivity.LoginActivity">
+    tools:context=".UserInfoActivity.EditProfileActivity">
+
+    <TextView
+        android:id="@+id/textViewHint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:text="@string/edit_profile_hint"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/radioGroupGender" />
 
     <EditText
-        android:id="@+id/editTextsid"
+        android:id="@+id/editTextNickname"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginTop="96dp"
         android:layout_marginEnd="24dp"
         android:autofillHints=""
-        android:hint="@string/student_id"
+        android:hint="@string/nickname"
         android:inputType="numberDecimal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -32,21 +42,7 @@
         android:inputType="textPassword"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextsid" />
-
-    <EditText
-        android:id="@+id/editTextNickname"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="24dp"
-        android:autofillHints=""
-        android:hint="@string/nickname"
-        android:inputType="textPersonName"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextPassword" />
+        app:layout_constraintTop_toBottomOf="@+id/editTextNickname" />
 
     <RadioGroup
         android:id="@+id/radioGroupGender"
@@ -57,7 +53,7 @@
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextNickname">
+        app:layout_constraintTop_toBottomOf="@+id/editTextPassword">
 
         <RadioButton
             android:id="@+id/radioButtonMale"
@@ -74,15 +70,15 @@
     </RadioGroup>
 
     <Button
-        android:id="@+id/buttonRegister"
+        android:id="@+id/buttonEdit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="10dp"
         android:layout_marginBottom="24dp"
-        android:text="@string/register"
-        android:textColor="@drawable/button_text_custom"
         android:background="@drawable/button_custom"
-        android:onClick="onRegisterClick"
+        android:onClick="onEditClick"
+        android:text="@string/confirm_edit_profile"
+        android:textColor="@drawable/button_text_custom"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

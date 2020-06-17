@@ -1,6 +1,5 @@
 package com.thu.thuhelp.MainActivity;
 
-import android.Manifest;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -8,8 +7,6 @@ import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,12 +15,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.InputType;
 import android.util.Log;
@@ -38,13 +32,13 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.thu.thuhelp.App;
 import com.thu.thuhelp.DealActivity.DealListActivity;
 import com.thu.thuhelp.R;
-import com.thu.thuhelp.EnterActivity.LoginActivity;
-import com.thu.thuhelp.EnterActivity.RegisterActivity;
+import com.thu.thuhelp.UserInfoActivity.EditProfileActivity;
+import com.thu.thuhelp.UserInfoActivity.LoginActivity;
+import com.thu.thuhelp.UserInfoActivity.RegisterActivity;
 import com.thu.thuhelp.utils.CommonInterface;
 import com.yalantis.ucrop.UCrop;
 
 import org.jetbrains.annotations.NotNull;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -53,7 +47,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
@@ -69,12 +62,13 @@ import okhttp3.Response;
  */
 public class MyFragment extends Fragment {
 
-    static private int
+    private final static int
             REQUEST_LOGIN = 0,
             REQUEST_REGISTER = 1,
             REQUEST_CAMERA = 2,
             REQUEST_ALBUM = 3,
-            REQUEST_CROP = 4;
+            REQUEST_CROP = 4,
+            REQUEST_EDIT = 5;
 
     static private int MAX_VALUE = 1000000;
     private File avatarFile;
@@ -120,12 +114,12 @@ public class MyFragment extends Fragment {
         super.onViewCreated(view, savedInstanced);
 
         view.findViewById(R.id.buttonLogin).setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            Intent intent = new Intent(activity, LoginActivity.class);
             startActivityForResult(intent, REQUEST_LOGIN);
         });
 
         view.findViewById(R.id.buttonRegister).setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), RegisterActivity.class);
+            Intent intent = new Intent(activity, RegisterActivity.class);
             startActivityForResult(intent, REQUEST_REGISTER);
         });
 
@@ -177,22 +171,26 @@ public class MyFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == AppCompatActivity.RESULT_OK) {
-            if (requestCode == REQUEST_LOGIN) {
-                Toast.makeText(getActivity(), R.string.login_success, Toast.LENGTH_SHORT).show();
-                activity.mainFragmentSetView();
-                activity.myFragmentSetView();
-            }
-            else if (requestCode == REQUEST_REGISTER) {
-                Toast.makeText(getActivity(), R.string.register_success, Toast.LENGTH_SHORT).show();
-            }
-            else if (requestCode == REQUEST_CAMERA) {
-                cropAvatar();
-            }
-            else if (requestCode == REQUEST_ALBUM && data != null) {
-
-            }
-            else if (requestCode == REQUEST_CROP) {
-                uploadAvatar();
+            switch (requestCode) {
+                case REQUEST_LOGIN:
+                    Toast.makeText(activity, R.string.login_success, Toast.LENGTH_SHORT).show();
+                    activity.mainFragmentSetView();
+                    activity.myFragmentSetView();
+                    break;
+                case REQUEST_REGISTER:
+                    Toast.makeText(activity, R.string.register_success, Toast.LENGTH_SHORT).show();
+                    break;
+                case REQUEST_CAMERA:
+                    cropAvatar();
+                    break;
+                case REQUEST_ALBUM:
+                    break;
+                case REQUEST_CROP:
+                    uploadAvatar();
+                    break;
+                case REQUEST_EDIT:
+                    Toast.makeText(activity, R.string.edit_profile_success, Toast.LENGTH_SHORT).show();
+                    break;
             }
         }
     }
@@ -214,8 +212,7 @@ public class MyFragment extends Fragment {
                     public void onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
                         if (which == 0) {
                             editAvatar();
-                        }
-                        else if (which == 1) {
+                        } else if (which == 1) {
                             editProfile();
                         }
                     }
@@ -364,8 +361,7 @@ public class MyFragment extends Fragment {
                                 camera.putExtra(MediaStore.EXTRA_OUTPUT, imageURI);
                                 startActivityForResult(camera, REQUEST_CAMERA);
                             }
-                        }
-                        else if (which == 1) {
+                        } else if (which == 1) {
                             Intent album = new Intent(
                                     Intent.ACTION_PICK,
                                     android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -405,11 +401,11 @@ public class MyFragment extends Fragment {
                     if (statusCode == 200) {
                         activity.runOnUiThread(() -> Toast.makeText(activity, R.string.upload_avatar_success, Toast.LENGTH_LONG).show());
                         updateUserInfo();
-                    }
-                    else {
+                    } else {
                         activity.runOnUiThread(() -> Toast.makeText(activity, resStr, Toast.LENGTH_LONG).show());
                     }
-                } catch (JSONException ignored) {}
+                } catch (JSONException ignored) {
+                }
             }
         });
     }
@@ -423,14 +419,14 @@ public class MyFragment extends Fragment {
         try {
             Bitmap avatar = BitmapFactory.decodeStream(cr.openInputStream(Uri.fromFile(avatarFile)));
             ((ImageView) view.findViewById(R.id.avatarView)).setImageBitmap(avatar);
-        }
-        catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             Toast.makeText(activity, "更新头像失败", Toast.LENGTH_LONG).show();
         }
     }
 
     private void editProfile() {
-
+        Intent intent = new Intent(activity, EditProfileActivity.class);
+        startActivityForResult(intent, REQUEST_EDIT);
     }
 
     private void updateUserInfo() {
@@ -486,15 +482,14 @@ public class MyFragment extends Fragment {
                                 ((TextView) view.findViewById(R.id.nickname_label)).setText(userInfo.getString("nickname"));
                                 ((TextView) view.findViewById(R.id.balance_label)).setText(userInfo.getString("balance"));
                                 login = true;
+                            } catch (Exception ignored) {
                             }
-                            catch (Exception ignored) {}
                         });
-                    }
-                    else {
+                    } else {
                         activity.runOnUiThread(() -> Toast.makeText(activity, resStr, Toast.LENGTH_SHORT).show());
                     }
+                } catch (JSONException ignored) {
                 }
-                catch (JSONException ignored) {}
             }
         });
     }
