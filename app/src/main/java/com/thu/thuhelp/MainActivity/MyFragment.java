@@ -79,6 +79,7 @@ public class MyFragment extends Fragment {
     private MainActivity activity;
     private App app;
     private View view;
+    private boolean login;
 
     public MyFragment() {
         // Required empty public constructor
@@ -96,12 +97,12 @@ public class MyFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-//        return inflater.inflate(R.layout.fragment_my, container, false);
         activity = (MainActivity) getActivity();
         assert activity != null;
         app = (App) activity.getApplication();
         view = inflater.inflate(R.layout.fragment_my, container, false);
         avatarFile = new File(new File(activity.getFilesDir(), "images"), "avatar_new.jpg");
+        login = false;
         return view;
     }
 
@@ -132,6 +133,9 @@ public class MyFragment extends Fragment {
         });
 
         view.findViewById(R.id.profileLayout).setOnClickListener(v -> {
+            if (!login) {
+                return;
+            }
             showEditProfileDialog();
         });
 
@@ -438,6 +442,8 @@ public class MyFragment extends Fragment {
     }
 
     void setLogoutView() {
+        login = false;
+        updateAvatar(true);
         view.findViewById(R.id.userCardView).setVisibility(View.INVISIBLE);
         view.findViewById(R.id.buttonLogout).setVisibility(View.INVISIBLE);
         view.findViewById(R.id.buttonLogin).setVisibility(View.VISIBLE);
@@ -483,6 +489,7 @@ public class MyFragment extends Fragment {
                                 updateAvatar(avatarString.equals("null"));
                                 ((TextView) view.findViewById(R.id.nickname_label)).setText(userInfo.getString("nickname"));
                                 ((TextView) view.findViewById(R.id.balance_label)).setText(userInfo.getString("balance"));
+                                login = true;
                             }
                             catch (Exception ignored) {}
                         });
