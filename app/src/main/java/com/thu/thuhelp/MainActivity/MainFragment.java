@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.thu.thuhelp.App;
@@ -46,11 +47,13 @@ import okhttp3.Response;
  */
 public class MainFragment extends Fragment {
     private final LinkedList<Deal> dealList = new LinkedList<>();
+    private SwipeRefreshLayout swipeRefreshLayout;
     private RecyclerView recyclerViewDeal;
     private MissionListAdapter adapter;
+    private SearchView searchView;
+
     private App app;
     private MainActivity activity;
-    private SwipeRefreshLayout swipeRefreshLayout;
     private int clickedPosition;
 
     static private int
@@ -100,6 +103,26 @@ public class MainFragment extends Fragment {
         // set swipe refresh layout
         swipeRefreshLayout.setOnRefreshListener(this::updateDealList);
         setRecyclerView();
+
+        // set query
+        searchView = activity.findViewById(R.id.searchView);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                searchDeal(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+        searchView.setOnCloseListener(() -> {
+            adapter.dealList = dealList;
+            adapter.notifyDataSetChanged();
+            return false;
+        });
     }
 
     private void setRecyclerView() {
@@ -183,5 +206,19 @@ public class MainFragment extends Fragment {
             }
         }
 
+    }
+
+    private void searchDeal(String query) {
+        if (query.equals("")) {
+            return;
+        }
+        LinkedList<Deal> searchDealList = new LinkedList<>();
+        for (Deal deal : dealList) {
+            if (deal.containString(query)) {
+                searchDealList.addLast(deal);
+            }
+        }
+        adapter.dealList = searchDealList;
+        adapter.notifyDataSetChanged();
     }
 }
