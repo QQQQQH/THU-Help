@@ -101,8 +101,12 @@ public class MyFragment extends Fragment {
         assert activity != null;
         app = (App) activity.getApplication();
         view = inflater.inflate(R.layout.fragment_my, container, false);
-        avatarFile = new File(new File(activity.getFilesDir(), "images"), "avatar_new.jpg");
         login = false;
+
+        avatarFile = new File(new File(activity.getFilesDir(), "images"), "avatar_new.jpg");
+        if (!avatarFile.getParentFile().exists()) {
+            avatarFile.getParentFile().mkdirs();
+        }
         return view;
     }
 
