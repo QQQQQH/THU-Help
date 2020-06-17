@@ -352,6 +352,13 @@ public class MyFragment extends Fragment {
                         if (which == 0) {
                             Intent camera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                             if (camera.resolveActivity(activity.getPackageManager()) != null) {
+                                if (avatarFile.exists()) {
+                                    avatarFile.delete();
+                                    try {
+                                        avatarFile.createNewFile();
+                                    }
+                                    catch (IOException ignored) {}
+                                }
                                 Uri imageURI = FileProvider.getUriForFile(
                                         activity,
                                         "com.edu.thuhelp.fileprovider",
