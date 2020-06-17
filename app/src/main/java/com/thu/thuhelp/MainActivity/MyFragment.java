@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -40,6 +41,7 @@ import com.thu.thuhelp.R;
 import com.thu.thuhelp.EnterActivity.LoginActivity;
 import com.thu.thuhelp.EnterActivity.RegisterActivity;
 import com.thu.thuhelp.utils.CommonInterface;
+import com.yalantis.ucrop.UCrop;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
@@ -54,6 +56,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 
 import okhttp3.Call;
@@ -75,6 +78,7 @@ public class MyFragment extends Fragment {
 
     static private int MAX_VALUE = 1000000;
     private File avatarFile;
+    private File avatarTemp;
 
     private MainActivity activity;
     private App app;
@@ -103,7 +107,8 @@ public class MyFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_my, container, false);
         login = false;
 
-        avatarFile = new File(new File(activity.getFilesDir(), "images"), "avatar_new.jpg");
+        avatarFile = new File(new File(activity.getFilesDir(), "images"), "avatar.jpg");
+        avatarTemp = new File(new File(activity.getFilesDir(), "images"), "avatar_temp.jpg");
         if (!avatarFile.getParentFile().exists()) {
             avatarFile.getParentFile().mkdirs();
         }
@@ -180,7 +185,7 @@ public class MyFragment extends Fragment {
             else if (requestCode == REQUEST_REGISTER) {
                 Toast.makeText(getActivity(), R.string.register_success, Toast.LENGTH_SHORT).show();
             }
-            else if (requestCode == REQUEST_CAMERA && data != null) {
+            else if (requestCode == REQUEST_CAMERA) {
                 cropAvatar();
             }
             else if (requestCode == REQUEST_ALBUM && data != null) {
@@ -190,7 +195,6 @@ public class MyFragment extends Fragment {
                 uploadAvatar();
             }
         }
-
     }
 
     private MaterialDialog.Builder buildInfoDialog(String content) {
@@ -352,17 +356,10 @@ public class MyFragment extends Fragment {
                         if (which == 0) {
                             Intent camera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                             if (camera.resolveActivity(activity.getPackageManager()) != null) {
-                                if (avatarFile.exists()) {
-                                    avatarFile.delete();
-                                    try {
-                                        avatarFile.createNewFile();
-                                    }
-                                    catch (IOException ignored) {}
-                                }
                                 Uri imageURI = FileProvider.getUriForFile(
                                         activity,
                                         "com.edu.thuhelp.fileprovider",
-                                        avatarFile
+                                        avatarTemp
                                 );
                                 camera.putExtra(MediaStore.EXTRA_OUTPUT, imageURI);
                                 startActivityForResult(camera, REQUEST_CAMERA);
@@ -384,32 +381,16 @@ public class MyFragment extends Fragment {
     }
 
     private void cropAvatar() {
-        Uri imageURI = FileProvider.getUriForFile(
-                activity,
-                "com.edu.thuhelp.fileprovider",
-                avatarFile
-        );
-        Intent crop = new Intent("com.android.camera.action.CROP");
-        crop.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        crop.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-        crop.setDataAndType(imageURI, "image/*");
-        crop.putExtra("crop", "true");
-        crop.putExtra("aspectX", 1);
-        crop.putExtra("aspectY", 1);
-        crop.putExtra("outputX", 150);
-        crop.putExtra("outputY", 150);
-//        crop.putExtra("return-data", true);
-//        crop.putExtra(MediaStore.EXTRA_OUTPUT, imageURI);
-        crop.putExtra("return-data", false);
-        crop.putExtra(MediaStore.EXTRA_OUTPUT, imageURI);
-        crop.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
-        startActivityForResult(crop, REQUEST_CROP);
+        UCrop.of(Uri.fromFile(avatarTemp), Uri.fromFile(avatarTemp))
+                .withAspectRatio(1, 1)
+                .withMaxResultSize(150, 150)
+                .start(activity, this, REQUEST_CROP);
     }
 
     private void uploadAvatar() {
         HashMap<String, String> params = new HashMap<>();
         params.put("skey", app.getSkey());
-        CommonInterface.uploadImage("/user/account/upload-avatar", params, avatarFile.toString(), new Callback() {
+        CommonInterface.uploadImage("/user/account/upload-avatar", params, avatarTemp.toString(), new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
                 Log.e("error", e.toString());
@@ -422,6 +403,7 @@ public class MyFragment extends Fragment {
                     JSONObject res = new JSONObject(resStr);
                     int statusCode = res.getInt("status");
                     if (statusCode == 200) {
+                        activity.runOnUiThread(() -> Toast.makeText(activity, R.string.upload_avatar_success, Toast.LENGTH_LONG).show());
                         updateUserInfo();
                     }
                     else {
