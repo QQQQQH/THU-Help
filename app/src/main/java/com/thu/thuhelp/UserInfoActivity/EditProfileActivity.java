@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
+import com.thu.thuhelp.App;
 import com.thu.thuhelp.R;
 import com.thu.thuhelp.utils.CommonInterface;
 
@@ -60,10 +61,11 @@ public class EditProfileActivity extends AppCompatActivity {
         String password = editTextPassword.getText().toString();
         String gender = radioButtonMale.isChecked() ? "0" : "1";
         HashMap<String, String> params = new HashMap<>();
+        params.put("skey", ((App) getApplication()).getSkey());
         params.put("nickname", nickname);
         params.put("password", password);
         params.put("gender", gender);
-        CommonInterface.sendOkHttpPostRequest("/user/account/???", params, new Callback() {
+        CommonInterface.sendOkHttpPostRequest("/user/account/edit", params, new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
                 Log.e("error", e.toString());

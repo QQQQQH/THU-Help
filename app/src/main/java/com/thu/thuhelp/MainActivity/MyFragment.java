@@ -176,8 +176,8 @@ public class MyFragment extends Fragment {
             switch (requestCode) {
                 case REQUEST_LOGIN:
                     Toast.makeText(activity, R.string.login_success, Toast.LENGTH_SHORT).show();
-                    activity.mainFragmentSetView();
                     activity.myFragmentSetView();
+                    activity.mainFragmentSetView();
                     break;
                 case REQUEST_REGISTER:
                     Toast.makeText(activity, R.string.register_success, Toast.LENGTH_SHORT).show();
@@ -194,6 +194,7 @@ public class MyFragment extends Fragment {
                     break;
                 case REQUEST_EDIT:
                     Toast.makeText(activity, R.string.edit_profile_success, Toast.LENGTH_SHORT).show();
+                    updateUserInfo();
                     break;
             }
         }
@@ -434,7 +435,7 @@ public class MyFragment extends Fragment {
 
     private void updateAvatar(boolean setDefault) {
         if (setDefault) {
-            ((ImageView) view.findViewById(R.id.avatarView)).setImageDrawable(getResources().getDrawable(R.drawable.ic_person));
+            ((ImageView) view.findViewById(R.id.avatarView)).setImageDrawable(getResources().getDrawable(R.drawable.ic_account_circle));
             return;
         }
         ContentResolver cr = activity.getContentResolver();
