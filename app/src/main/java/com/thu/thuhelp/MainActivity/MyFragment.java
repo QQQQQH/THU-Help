@@ -391,8 +391,11 @@ public class MyFragment extends Fragment {
         crop.putExtra("aspectY", 1);
         crop.putExtra("outputX", 150);
         crop.putExtra("outputY", 150);
-        crop.putExtra("return-data", true);
+//        crop.putExtra("return-data", true);
+//        crop.putExtra(MediaStore.EXTRA_OUTPUT, imageURI);
+        crop.putExtra("return-data", false);
         crop.putExtra(MediaStore.EXTRA_OUTPUT, imageURI);
+        crop.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
         startActivityForResult(crop, REQUEST_CROP);
     }
 
