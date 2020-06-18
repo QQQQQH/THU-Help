@@ -129,7 +129,7 @@ public class MainFragment extends Fragment {
 
         // set recycler view
         recyclerViewDeal = activity.findViewById(R.id.recyclerViewDeal);
-        adapter = new MissionListAdapter(activity, dealList);
+        adapter = new MissionListAdapter(activity, dealList,app);
 
         recyclerViewDeal.setAdapter(adapter);
         recyclerViewDeal.setLayoutManager(new LinearLayoutManager(activity));

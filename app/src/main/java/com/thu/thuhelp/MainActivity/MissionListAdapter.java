@@ -1,26 +1,59 @@
 package com.thu.thuhelp.MainActivity;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.thu.thuhelp.App;
 import com.thu.thuhelp.R;
+import com.thu.thuhelp.UserInfoActivity.LoginActivity;
+import com.thu.thuhelp.utils.CommonInterface;
 import com.thu.thuhelp.utils.Deal;
 
+import org.jetbrains.annotations.NotNull;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedOutputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Base64;
+import java.util.HashMap;
 import java.util.LinkedList;
 
-public class MissionListAdapter
-        extends RecyclerView.Adapter<MissionListAdapter.MissionViewHolder> {
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
+
+public class MissionListAdapter extends RecyclerView.Adapter<MissionListAdapter.MissionViewHolder> {
+    private App app;
     public LinkedList<Deal> dealList;
     private LayoutInflater inflater;
     private OnItemClickListener onItemClickListener;
+
+    public MissionListAdapter(Context context, LinkedList<Deal> dealList, App app) {
+        this.app = app;
+        this.inflater = LayoutInflater.from(context);
+        this.dealList = dealList;
+    }
 
     public interface OnItemClickListener {
         void onItemClick(View view, int position);
@@ -30,16 +63,10 @@ public class MissionListAdapter
         this.onItemClickListener = onItemClickListener;
     }
 
-    public MissionListAdapter(Context context,
-                              LinkedList<Deal> dealList) {
-        inflater = LayoutInflater.from(context);
-        this.dealList = dealList;
-    }
 
-    static class MissionViewHolder extends RecyclerView.ViewHolder
-//            implements View.OnClickListener
-    {
+    static class MissionViewHolder extends RecyclerView.ViewHolder {
         final TextView textViewTitle, textViewName, textViewTime;
+        final ImageView imageViewAvatar;
         final View itemView;
 
         MissionViewHolder(@NonNull View itemView) {
@@ -47,14 +74,9 @@ public class MissionListAdapter
             textViewTitle = itemView.findViewById(R.id.textViewTitle);
             textViewName = itemView.findViewById(R.id.textViewName);
             textViewTime = itemView.findViewById(R.id.textViewTime);
+            imageViewAvatar = itemView.findViewById(R.id.imageViewAvatar);
             this.itemView = itemView;
-//            itemView.setOnClickListener(this);
         }
-
-//        @Override
-//        public void onClick(View v) {
-//            Toast.makeText(v.getContext(), "Clicked " + textViewTitle.getText().toString(), Toast.LENGTH_SHORT).show();
-//        }
     }
 
     @NonNull
@@ -66,19 +88,50 @@ public class MissionListAdapter
 
     @Override
     public void onBindViewHolder(@NonNull MissionListAdapter.MissionViewHolder holder, int position) {
-        String title = dealList.get(position).title,
-                name = dealList.get(position).name,
-                time = dealList.get(position).startTime;
+        Deal deal = dealList.get(position);
+        String title = deal.title,
+                name = deal.name,
+                time = deal.startTime,
+                initiator = deal.initiator;
         holder.textViewTitle.setText(title);
         holder.textViewName.setText(name);
         holder.textViewTime.setText(time);
-        if (onItemClickListener != null) {
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onItemClickListener.onItemClick(v, position);
+        holder.imageViewAvatar.setImageResource(R.drawable.ic_person);
+
+        HashMap<String, String> params = new HashMap<>();
+        params.put("skey", app.getSkey());
+        params.put("uid", initiator);
+        Handler handler = new Handler();
+
+        CommonInterface.sendOkHttpGetRequest("/user/account/info", params, new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                Log.e("error", e.toString());
+            }
+
+            @RequiresApi(api = Build.VERSION_CODES.O)
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                final String resStr = response.body().string();
+                Log.e("response", resStr);
+                try {
+                    JSONObject res = new JSONObject(resStr);
+                    int statusCode = res.getInt("status");
+                    if (statusCode == 200) {
+                        JSONObject userInfo = res.getJSONObject("data");
+                        String avatarString = userInfo.getString("avatar");
+                        byte[] avatarBytes = Base64.getDecoder().decode(avatarString);
+                        Bitmap avatar = BitmapFactory.decodeByteArray(avatarBytes, 0, avatarBytes.length);
+                        handler.post(() -> holder.imageViewAvatar.setImageBitmap(avatar));
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-            });
+            }
+        });
+
+        if (onItemClickListener != null) {
+            holder.itemView.setOnClickListener(v -> onItemClickListener.onItemClick(v, position));
         }
     }
 

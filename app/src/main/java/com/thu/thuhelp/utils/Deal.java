@@ -13,6 +13,7 @@ import java.text.SimpleDateFormat;
 public class Deal implements Parcelable {
     public String address;
     public double bonus;
+    public String initiator;
     public String description;
     public String title;
     public String phone;
@@ -24,6 +25,7 @@ public class Deal implements Parcelable {
     public Deal(JSONObject obj) throws JSONException {
         address = obj.getString("address");
         bonus = obj.getDouble("bonus");
+        initiator = obj.getString("initiator");
         description = obj.getString("description");
         title = obj.getString("title");
         phone = obj.getString("phone");
@@ -46,6 +48,7 @@ public class Deal implements Parcelable {
     protected Deal(Parcel in) {
         address = in.readString();
         bonus = in.readDouble();
+        initiator = in.readString();
         description = in.readString();
         title = in.readString();
         phone = in.readString();
@@ -76,6 +79,7 @@ public class Deal implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(address);
         dest.writeDouble(bonus);
+        dest.writeString(initiator);
         dest.writeString(description);
         dest.writeString(title);
         dest.writeString(phone);

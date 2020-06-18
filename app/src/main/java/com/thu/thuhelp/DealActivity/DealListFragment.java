@@ -49,7 +49,7 @@ public class DealListFragment extends Fragment {
     private RecyclerView recyclerViewDeal;
     private MissionListAdapter adapter;
     private SearchView searchView;
-    
+
     private App app;
     private DealListActivity activity;
     private int state, init;
@@ -130,7 +130,7 @@ public class DealListFragment extends Fragment {
 
         // set recycler view
         recyclerViewDeal = view.findViewById(R.id.recyclerViewDeal);
-        adapter = new MissionListAdapter(activity, dealList);
+        adapter = new MissionListAdapter(activity, dealList, app);
 
         recyclerViewDeal.setAdapter(adapter);
         recyclerViewDeal.setLayoutManager(new LinearLayoutManager(activity));

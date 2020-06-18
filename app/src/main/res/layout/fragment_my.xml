@@ -22,7 +22,7 @@
             android:layout_height="100dp"
             android:layout_weight="2"
             android:scaleType="fitCenter"
-            android:src="@drawable/ic_account_circle"
+            app:srcCompat="@drawable/ic_account_circle"
             app:riv_border_color="@color/colorLight"
             app:riv_border_width="5dp"
             app:riv_corner_radius="50dp"
