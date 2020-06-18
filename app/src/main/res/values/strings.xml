@@ -70,4 +70,6 @@
     <string name="edit_profile_hint">昵称和密码置空则不更改</string>
     <string name="private_message">私信</string>
     <string name="query_hint">请输入搜索内容</string>
+    <string name="input_message_hint">输入消息</string>
+    <string name="send">发送</string>
 </resources>
