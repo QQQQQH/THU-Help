@@ -115,6 +115,8 @@ public class MyFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanced) {
         super.onViewCreated(view, savedInstanced);
 
+        ((ImageView) view.findViewById(R.id.avatarView)).setImageDrawable(getResources().getDrawable(R.drawable.ic_account_circle));
+
         view.findViewById(R.id.buttonLogin).setOnClickListener(v -> {
             Intent intent = new Intent(activity, LoginActivity.class);
             startActivityForResult(intent, REQUEST_LOGIN);

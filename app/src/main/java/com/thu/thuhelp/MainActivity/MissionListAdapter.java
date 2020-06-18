@@ -72,13 +72,13 @@ public class MissionListAdapter extends RecyclerView.Adapter<MissionListAdapter.
 
     @NonNull
     @Override
-    public MissionListAdapter.MissionViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public MissionViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = inflater.inflate(R.layout.item_mission, parent, false);
         return new MissionViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MissionListAdapter.MissionViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MissionViewHolder holder, int position) {
         Deal deal = dealList.get(position);
         String title = deal.title,
                 name = deal.name,

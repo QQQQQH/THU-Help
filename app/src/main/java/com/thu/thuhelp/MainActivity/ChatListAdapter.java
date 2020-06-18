@@ -3,6 +3,7 @@ package com.thu.thuhelp.MainActivity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
@@ -25,6 +26,9 @@ import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.HashMap;
@@ -38,11 +42,20 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatVi
     private App app;
     private LayoutInflater inflater;
     private LinkedList<ChatAbstract> chatAbstractList;
+    private OnItemClickListener onItemClickListener;
 
     public ChatListAdapter(Context context, LinkedList<ChatAbstract> chatAbstractList, App app) {
         this.app = app;
         this.inflater = LayoutInflater.from(context);
         this.chatAbstractList = chatAbstractList;
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(View view, int position);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        this.onItemClickListener = onItemClickListener;
     }
 
 
@@ -101,12 +114,26 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatVi
                         byte[] avatarBytes = Base64.getDecoder().decode(avatarString);
                         Bitmap avatar = BitmapFactory.decodeByteArray(avatarBytes, 0, avatarBytes.length);
                         handler.post(() -> holder.imageViewAvatar.setImageBitmap(avatar));
+
+                        File avatarFile = new File(new File(app.getFilesDir(), "images"), "avatar" + uid + ".jpg");
+                        if (!avatarFile.getParentFile().exists()) {
+                            avatarFile.getParentFile().mkdirs();
+                        }
+                        FileOutputStream fos = new FileOutputStream(avatarFile);
+                        BufferedOutputStream bos = new BufferedOutputStream(fos);
+                        bos.write(avatarBytes);
+                        bos.close();
+                        fos.close();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
         });
+
+        if (onItemClickListener != null) {
+            holder.itemView.setOnClickListener(v -> onItemClickListener.onItemClick(v, position));
+        }
     }
 
     @Override

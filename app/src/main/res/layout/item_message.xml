@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -7,37 +8,68 @@
 
 
     <LinearLayout
-        android:id="@+id/left_layout"
+        android:id="@+id/layoutLeft"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="start"
-        android:background="@drawable/left_messages"
         android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/left_msg"
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:id="@+id/imageViewAvatarLeft"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginEnd="8dp"
+            app:riv_border_color="@color/colorAccent"
+            app:riv_border_width="1dp"
+            app:srcCompat="@drawable/ic_person" />
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_margin="10dp"
-            android:textColor="#fff" />
+            android:background="@drawable/left_messages"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/left_msg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="10dp"
+                android:textColor="#fff" />
+        </LinearLayout>
     </LinearLayout>
 
 
     <LinearLayout
-        android:id="@+id/right_layout"
+        android:id="@+id/layoutRight"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end"
-        android:background="@drawable/right_messages"
         android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/right_msg"
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_margin="10dp" />
+            android:background="@drawable/right_messages"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/right_msg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="10dp" />
+        </LinearLayout>
+
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:id="@+id/imageViewAvatarRight"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginStart="8dp"
+            app:riv_border_color="@color/colorAccent"
+            app:riv_border_width="1dp"
+            app:srcCompat="@drawable/ic_person" />
     </LinearLayout>
 
 </LinearLayout>

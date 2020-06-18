@@ -11,7 +11,6 @@ import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.thu.thuhelp.App;
-import com.thu.thuhelp.ChatActivity.ChatActivity;
 import com.thu.thuhelp.R;
 import com.thu.thuhelp.utils.CommonInterface;
 
@@ -35,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private PagerAdapter pagerAdapter = new PagerAdapter(getSupportFragmentManager());
 
     private MainFragment mainFragment = new MainFragment();
-    private ChatFragment chatFragment = new ChatFragment();
+    private ChatListFragment chatListFragment = new ChatListFragment();
     private MyFragment myFragment = new MyFragment();
 
     @Override
@@ -50,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
         viewPager = findViewById(R.id.pager);
 
         pagerAdapter.addFragment(mainFragment);
-        pagerAdapter.addFragment(chatFragment);
+        pagerAdapter.addFragment(chatListFragment);
         pagerAdapter.addFragment(myFragment);
 
         viewPager.setAdapter(pagerAdapter);
@@ -145,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void chatFragmentSetView() {
-        runOnUiThread(chatFragment::setView);
+        runOnUiThread(chatListFragment::setView);
     }
 
     public void myFragmentSetView() {

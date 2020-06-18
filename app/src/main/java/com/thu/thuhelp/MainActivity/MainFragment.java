@@ -138,7 +138,6 @@ public class MainFragment extends Fragment {
         updateDealList();
 
         adapter.setOnItemClickListener((view, position) -> {
-//            Toast.makeText(activity, "Clicked " + position, Toast.LENGTH_SHORT).show();
             clickedPosition = position;
             Deal deal = dealList.get(position);
             Intent intent = new Intent(activity, DealInfoActivity.class);
