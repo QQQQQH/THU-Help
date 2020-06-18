@@ -27,15 +27,29 @@ import com.thu.thuhelp.R;
 import com.thu.thuhelp.Service.ChatWebSocketClient;
 import com.thu.thuhelp.Service.ChatWebSocketClientService;
 import com.thu.thuhelp.utils.ChatAbstract;
+import com.thu.thuhelp.utils.ChatSession;
 import com.thu.thuhelp.utils.ChatContent;
+import com.thu.thuhelp.utils.Message;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FilterInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.LinkedList;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class ChatListFragment extends Fragment {
-    private final LinkedList<ChatAbstract> chatAbstractList = new LinkedList<>();
+    private final ChatSession chatSession = new ChatSession();
     private final LinkedList<ChatContent> chatContentList = new LinkedList<>();
     private SwipeRefreshLayout swipeRefreshLayout;
     private RecyclerView recyclerViewChat;
@@ -48,10 +62,11 @@ public class ChatListFragment extends Fragment {
 
     private App app;
     private MainActivity activity;
+    private File chatListFile;
+
 
     public static final String
-            EXTRA_CHAR_ABSTRACT = "com.thu.thuhelp.MainActivity.MainFragment.extra.chat_abstract",
-            EXTRA_LEFT_AVATAR = "com.thu.thuhelp.MainActivity.MainFragment.extra.left_avatar";
+            EXTRA_CHAT_CONTENT = "com.thu.thuhelp.MainActivity.MainFragment.extra.chat_content";
 
     public ChatListFragment() {
         // Required empty public constructor
@@ -86,23 +101,29 @@ public class ChatListFragment extends Fragment {
     void setView() {
         // set recycler view
         recyclerViewChat = activity.findViewById(R.id.recyclerViewChat);
-        adapter = new ChatListAdapter(activity, chatAbstractList, app);
+        adapter = new ChatListAdapter(activity, chatSession.abstracrList, app);
 
         recyclerViewChat.setAdapter(adapter);
         recyclerViewChat.setLayoutManager(new LinearLayoutManager(activity));
         recyclerViewChat.addItemDecoration(new DividerItemDecoration(activity, DividerItemDecoration.VERTICAL));
 
+        chatListFile = new File(new File(activity.getFilesDir(), "chat"), "chat_list");
+        if (!chatListFile.getParentFile().exists()) {
+            chatListFile.getParentFile().mkdirs();
+        }
         initChatList();
         bindService();
 
         adapter.setOnItemClickListener((view, position) -> {
-            ChatAbstract chatAbstract = chatAbstractList.get(position);
+            ChatAbstract chatAbstract = chatSession.abstracrList.get(position);
+            ChatContent chatContent = chatSession.getContentByUid(chatAbstract.uid);
             Intent intent = new Intent(activity, ChatActivity.class);
-            intent.putExtra(EXTRA_CHAR_ABSTRACT, chatAbstract);
+            intent.putExtra(EXTRA_CHAT_CONTENT, chatContent);
             startActivity(intent);
         });
     }
 
+    // bind service
     private ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -129,12 +150,14 @@ public class ChatListFragment extends Fragment {
         doRegisterReceiver();
     }
 
-    private static class ChatMsgReceiver extends BroadcastReceiver {
+    // register receiver
+    private class ChatMsgReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             String message = intent.getStringExtra(ChatWebSocketClientService.EXTRA_MESSAGE);
             assert message != null;
             Log.e("ChatFragment", message);
+            receiveMsg(message);
         }
     }
 
@@ -144,13 +167,103 @@ public class ChatListFragment extends Fragment {
         activity.registerReceiver(chatMsgReceiver, filter);
     }
 
+    private void receiveMsg(String message) {
+        try {
+            JSONObject res = new JSONObject(message);
+            int statusCode = res.getInt("status");
+            if (statusCode == 200) {
+                int type = res.getInt("type");
+                if (type == 0) {
+                    return;
+                }
+                if (type == 1) {
+                    JSONObject jsonMsg = res.getJSONObject("data");
+                    receiveSingle(jsonMsg);
+
+                } else if (type == 2) {
+                    JSONArray msgList = res.getJSONArray("data");
+                    int length = msgList.length();
+                    for (int i = 0; i < length; ++i) {
+                        JSONObject jsonMsg = msgList.getJSONObject(i);
+                        receiveSingle(jsonMsg);
+                    }
+                }
+
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void receiveSingle(JSONObject jsonMsg) {
+        try {
+            String uid = jsonMsg.getString("sender");
+            String message = jsonMsg.getString("messageText");
+            String timeStamp = jsonMsg.getString("sendTime");
+
+            ChatAbstract chatAbstract = chatSession.getAbstractByUid(uid);
+            if (chatAbstract == null) {
+                chatSession.abstracrList.addFirst(new ChatAbstract(uid, message, timeStamp));
+                chatSession.contentList.addFirst(new ChatContent(uid, message, timeStamp, Message.TYPE_RECEIVED));
+            } else {
+                chatSession.abstracrList.remove(chatAbstract);
+                chatAbstract.timeStamp = timeStamp;
+                chatAbstract.lastMsg = message;
+                chatSession.abstracrList.addFirst(chatAbstract);
+
+                ChatContent chatContent = chatSession.getContentByUid(uid);
+                if (chatContent == null) {
+                    chatSession.contentList.addFirst(new ChatContent(uid, message, timeStamp, Message.TYPE_RECEIVED));
+                } else {
+                    chatContent.addMsg(message, timeStamp, Message.TYPE_RECEIVED);
+                }
+            }
+            adapter.notifyDataSetChanged();
+            saveChatList();
+        } catch (
+                JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void saveChatList() {
+        try {
+            ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(chatListFile));
+            for (ChatAbstract chatAbstract : chatSession.abstracrList) {
+                oos.writeObject(chatAbstract);
+            }
+            oos.flush();
+            oos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void getChatList() {
+        try {
+            LinkedList<ChatAbstract> list;
+            FileInputStream fis = new FileInputStream(chatListFile);
+            ObjectInputStream ois = new ObjectInputStream(fis);
+            while (fis.available() > 0) {
+                chatSession.abstracrList.add((ChatAbstract) ois.readObject());
+            }
+            ois.close();
+            fis.close();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void initChatList() {
-        ChatAbstract chatAbstract = new ChatAbstract("2a337d32-61a6-4088-97d4-2930ba2a634d",
-                "SQC2", "最后一条消息~");
-        chatAbstractList.addLast(chatAbstract);
-        chatAbstract = new ChatAbstract("8a343a55-bf02-42df-99d1-c764ea2d05cf",
-                "SQC", "最最最最最最最最最最后一条消息息息息息息息息息息息息息息息息息息息息息息息息息息息息息息");
-        chatAbstractList.addLast(chatAbstract);
-        adapter.notifyDataSetChanged();
+        getChatList();
+//        ChatAbstract chatAbstract = new ChatAbstract("2a337d32-61a6-4088-97d4-2930ba2a634d",
+//                "最后一条消息~", "0");
+//        chatSession.abstracrList.addLast(chatAbstract);
+//        chatAbstract = new ChatAbstract("8a343a55-bf02-42df-99d1-c764ea2d05cf",
+//                "最最最最最最最最最最后一条消息息息息息息息息息息息息息息息息息息息息息息息息息息息息息息",
+//                "0");
+//        chatSession.abstracrList.addLast(chatAbstract);
+//        adapter.notifyDataSetChanged();
     }
 }

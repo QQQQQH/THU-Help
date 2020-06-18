@@ -18,7 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.thu.thuhelp.App;
 import com.thu.thuhelp.MainActivity.ChatListFragment;
 import com.thu.thuhelp.R;
-import com.thu.thuhelp.utils.ChatAbstract;
+import com.thu.thuhelp.utils.ChatContent;
 import com.thu.thuhelp.utils.Message;
 
 import java.io.File;
@@ -36,7 +36,7 @@ public class ChatActivity extends AppCompatActivity {
 
     private App app;
 
-    private ChatAbstract chatAbstract;
+    private ChatContent chatContent;
 
     @Override
 
@@ -58,15 +58,6 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     void setView() {
-        Intent intent = getIntent();
-        chatAbstract = intent.getParcelableExtra(ChatListFragment.EXTRA_CHAR_ABSTRACT);
-        avatarFile = new File(new File(getFilesDir(), "images"), "avatar.jpg");
-        try {
-            rightAvatar = BitmapFactory.decodeStream(getContentResolver().openInputStream(Uri.fromFile(avatarFile)));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
         // set return actionBar
@@ -74,26 +65,37 @@ public class ChatActivity extends AppCompatActivity {
         assert actionBar != null;
         actionBar.setDisplayHomeAsUpEnabled(true);
 
+        Intent intent = getIntent();
+        chatContent = intent.getParcelableExtra(ChatListFragment.EXTRA_CHAT_CONTENT);
+        avatarFile = new File(new File(getFilesDir(), "images"), "avatar.jpg");
+        try {
+            rightAvatar = BitmapFactory.decodeStream(getContentResolver().openInputStream(Uri.fromFile(avatarFile)));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
         editTextMessage = findViewById(R.id.editTextMessage);
 
         initMessage();
 
         recyclerViewChat = findViewById(R.id.recyclerViewChat);
-        adapter = new MessageListAdapter(this, messageList, rightAvatar, chatAbstract.uid, app);
+        adapter = new MessageListAdapter(this, messageList, rightAvatar, chatContent.uid, app);
 
+        // reverse layout
         recyclerViewChat.setAdapter(adapter);
-        recyclerViewChat.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true));
+        recyclerViewChat.setLayoutManager(new LinearLayoutManager(
+                this, LinearLayoutManager.VERTICAL, true));
     }
 
     private void initMessage() {
-        Message msg1 = new Message("111", Message.TYPE_RECEIVED);
+        Message msg1 = new Message("111", "0", Message.TYPE_RECEIVED);
         messageList.addFirst(msg1);
         messageList.addFirst(msg1);
         messageList.addFirst(msg1);
         messageList.addFirst(msg1);
         messageList.addFirst(msg1);
         messageList.addFirst(msg1);
-        Message msg2 = new Message("222", Message.TYPE_SEND);
+        Message msg2 = new Message("222", "0", Message.TYPE_SEND);
         messageList.addFirst(msg2);
         messageList.addFirst(msg2);
         messageList.addFirst(msg2);
@@ -105,18 +107,21 @@ public class ChatActivity extends AppCompatActivity {
         messageList.addFirst(msg2);
         messageList.addFirst(msg2);
         messageList.addFirst(msg2);
-        Message msg3 = new Message("333", Message.TYPE_RECEIVED);
+        Message msg3 = new Message("333", "0", Message.TYPE_RECEIVED);
         messageList.addFirst(msg3);
         messageList.addFirst(msg3);
         messageList.addFirst(msg3);
         messageList.addFirst(msg3);
 
+        for (Message message : chatContent.msgList) {
+            messageList.addFirst(message);
+        }
     }
 
     public void onClickSend(View view) {
         String content = editTextMessage.getText().toString();
         if (!content.equals("")) {
-            Message message = new Message(content, Message.TYPE_SEND);
+            Message message = new Message(content, "0", Message.TYPE_SEND);
             messageList.addFirst(message);
             adapter.notifyDataSetChanged();
             editTextMessage.setText("");

@@ -83,7 +83,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatVi
     @Override
     public void onBindViewHolder(@NonNull ChatViewHolder holder, int position) {
         ChatAbstract chatAbstract = chatAbstractList.get(position);
-        holder.textViewNickname.setText(chatAbstract.nickName);
+        holder.textViewNickname.setText(R.string.nickname);
         holder.textViewLastMsg.setText(chatAbstract.lastMsg);
         holder.imageViewAvatar.setImageResource(R.drawable.ic_person);
 
@@ -110,6 +110,10 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatVi
                     int statusCode = res.getInt("status");
                     if (statusCode == 200) {
                         JSONObject userInfo = res.getJSONObject("data");
+
+                        String nickName = userInfo.getString("nickname");
+                        handler.post(() -> holder.textViewNickname.setText(nickName));
+
                         String avatarString = userInfo.getString("avatar");
                         byte[] avatarBytes = Base64.getDecoder().decode(avatarString);
                         Bitmap avatar = BitmapFactory.decodeByteArray(avatarBytes, 0, avatarBytes.length);
