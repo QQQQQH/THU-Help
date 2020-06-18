@@ -178,6 +178,7 @@ public class MyFragment extends Fragment {
                     Toast.makeText(activity, R.string.login_success, Toast.LENGTH_SHORT).show();
                     activity.myFragmentSetView();
                     activity.mainFragmentSetView();
+                    activity.chatFragmentSetView();
                     break;
                 case REQUEST_REGISTER:
                     Toast.makeText(activity, R.string.register_success, Toast.LENGTH_SHORT).show();
@@ -366,8 +367,7 @@ public class MyFragment extends Fragment {
                                 camera.putExtra(MediaStore.EXTRA_OUTPUT, imageURI);
                                 startActivityForResult(camera, REQUEST_CAMERA);
                             }
-                        }
-                        else if (which == 1) {
+                        } else if (which == 1) {
                             Intent album = new Intent(
                                     Intent.ACTION_PICK,
                                     android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -403,7 +403,8 @@ public class MyFragment extends Fragment {
             is.close();
             fos.close();
             cropAvatar();
-        } catch (IOException ignored) {}
+        } catch (IOException ignored) {
+        }
     }
 
     private void uploadAvatar() {
@@ -442,8 +443,7 @@ public class MyFragment extends Fragment {
         try {
             Bitmap avatar = BitmapFactory.decodeStream(cr.openInputStream(Uri.fromFile(avatarFile)));
             ((ImageView) view.findViewById(R.id.avatarView)).setImageBitmap(avatar);
-        }
-        catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             Toast.makeText(activity, "更新头像失败", Toast.LENGTH_LONG).show();
         }
     }

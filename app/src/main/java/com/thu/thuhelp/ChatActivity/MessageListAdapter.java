@@ -43,7 +43,7 @@ public class MessageListAdapter
     @NonNull
     @Override
     public MessageListAdapter.MessageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView = inflater.inflate(R.layout.message_item, parent, false);
+        View itemView = inflater.inflate(R.layout.item_message, parent, false);
         return new MessageViewHolder(itemView);
     }
 

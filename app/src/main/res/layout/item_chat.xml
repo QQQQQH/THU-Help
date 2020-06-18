@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="6dp">
 
     <TextView
-        android:id="@+id/textViewTitle"
+        android:id="@+id/textViewNickName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:text="任务标题"
+        android:text="昵称"
         android:textAppearance="@style/TextAppearance.AppCompat.Headline"
         app:layout_constraintStart_toEndOf="@+id/imageViewAvatar"
         app:layout_constraintTop_toTopOf="@+id/imageViewAvatar" />
@@ -31,21 +30,16 @@
         app:srcCompat="@drawable/ic_person" />
 
     <TextView
-        android:id="@+id/textViewName"
-        android:layout_width="wrap_content"
+        android:id="@+id/textViewLastMsg"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:text="发布人"
+        android:layout_marginEnd="16dp"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:text="最后一条消息ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss"
         app:layout_constraintBottom_toBottomOf="@+id/imageViewAvatar"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/imageViewAvatar" />
-
-    <TextView
-        android:id="@+id/textViewTime"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:text="发布时间"
-        app:layout_constraintBaseline_toBaselineOf="@+id/textViewName"
-        app:layout_constraintStart_toEndOf="@+id/textViewName" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

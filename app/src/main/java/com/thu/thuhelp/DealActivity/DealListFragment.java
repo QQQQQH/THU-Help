@@ -120,7 +120,7 @@ public class DealListFragment extends Fragment {
         super.onViewCreated(view, savedInstanced);
 
         // set swipe refresh layout
-        swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
+        swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayoutDeal);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {

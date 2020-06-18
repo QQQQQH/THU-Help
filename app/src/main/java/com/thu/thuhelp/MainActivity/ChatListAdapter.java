@@ -18,8 +18,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.thu.thuhelp.App;
 import com.thu.thuhelp.R;
+import com.thu.thuhelp.utils.ChatAbstract;
 import com.thu.thuhelp.utils.CommonInterface;
-import com.thu.thuhelp.utils.Deal;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
@@ -34,37 +34,27 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
-public class MissionListAdapter extends RecyclerView.Adapter<MissionListAdapter.MissionViewHolder> {
+public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatViewHolder> {
     private App app;
-    public LinkedList<Deal> dealList;
     private LayoutInflater inflater;
-    private OnItemClickListener onItemClickListener;
+    private LinkedList<ChatAbstract> chatAbstractList;
 
-    public MissionListAdapter(Context context, LinkedList<Deal> dealList, App app) {
+    public ChatListAdapter(Context context, LinkedList<ChatAbstract> chatAbstractList, App app) {
         this.app = app;
         this.inflater = LayoutInflater.from(context);
-        this.dealList = dealList;
-    }
-
-    public interface OnItemClickListener {
-        void onItemClick(View view, int position);
-    }
-
-    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
-        this.onItemClickListener = onItemClickListener;
+        this.chatAbstractList = chatAbstractList;
     }
 
 
-    static class MissionViewHolder extends RecyclerView.ViewHolder {
-        final TextView textViewTitle, textViewName, textViewTime;
+    static class ChatViewHolder extends RecyclerView.ViewHolder {
+        final TextView textViewNickname, textViewLastMsg;
         final ImageView imageViewAvatar;
         final View itemView;
 
-        MissionViewHolder(@NonNull View itemView) {
+        ChatViewHolder(@NonNull View itemView) {
             super(itemView);
-            textViewTitle = itemView.findViewById(R.id.textViewNickName);
-            textViewName = itemView.findViewById(R.id.textViewLastMessage);
-            textViewTime = itemView.findViewById(R.id.textViewTime);
+            textViewNickname = itemView.findViewById(R.id.textViewNickName);
+            textViewLastMsg = itemView.findViewById(R.id.textViewLastMsg);
             imageViewAvatar = itemView.findViewById(R.id.imageViewAvatar);
             this.itemView = itemView;
         }
@@ -72,26 +62,23 @@ public class MissionListAdapter extends RecyclerView.Adapter<MissionListAdapter.
 
     @NonNull
     @Override
-    public MissionListAdapter.MissionViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView = inflater.inflate(R.layout.item_mission, parent, false);
-        return new MissionViewHolder(itemView);
+    public ChatViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View itemView = inflater.inflate(R.layout.item_chat, parent, false);
+        return new ChatListAdapter.ChatViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MissionListAdapter.MissionViewHolder holder, int position) {
-        Deal deal = dealList.get(position);
-        String title = deal.title,
-                name = deal.name,
-                time = deal.startTime,
-                initiator = deal.initiator;
-        holder.textViewTitle.setText(title);
-        holder.textViewName.setText(name);
-        holder.textViewTime.setText(time);
+    public void onBindViewHolder(@NonNull ChatViewHolder holder, int position) {
+        ChatAbstract chatAbstract = chatAbstractList.get(position);
+        holder.textViewNickname.setText(chatAbstract.nickName);
+        holder.textViewLastMsg.setText(chatAbstract.lastMsg);
         holder.imageViewAvatar.setImageResource(R.drawable.ic_person);
+
+        String uid = chatAbstract.uid;
 
         HashMap<String, String> params = new HashMap<>();
         params.put("skey", app.getSkey());
-        params.put("uid", initiator);
+        params.put("uid", uid);
         Handler handler = new Handler();
 
         CommonInterface.sendOkHttpGetRequest("/user/account/info", params, new Callback() {
@@ -120,14 +107,12 @@ public class MissionListAdapter extends RecyclerView.Adapter<MissionListAdapter.
                 }
             }
         });
-
-        if (onItemClickListener != null) {
-            holder.itemView.setOnClickListener(v -> onItemClickListener.onItemClick(v, position));
-        }
     }
 
     @Override
     public int getItemCount() {
-        return dealList.size();
+        return chatAbstractList.size();
     }
+
+
 }

@@ -11,7 +11,7 @@
         android:layout_height="wrap_content">
 
         <TextView
-            android:id="@+id/textViewTitle"
+            android:id="@+id/textViewNickName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
@@ -26,8 +26,8 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="64dp"
             android:text="@string/deal_title"
-            app:layout_constraintBaseline_toBaselineOf="@+id/textViewTitle"
-            app:layout_constraintStart_toEndOf="@+id/textViewTitle" />
+            app:layout_constraintBaseline_toBaselineOf="@+id/textViewNickName"
+            app:layout_constraintStart_toEndOf="@+id/textViewNickName" />
 
         <TextView
             android:id="@+id/textViewDescription"
@@ -40,7 +40,7 @@
             app:layout_constraintTop_toBottomOf="@+id/textViewShowTitle" />
 
         <TextView
-            android:id="@+id/textViewName"
+            android:id="@+id/textViewLastMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
@@ -113,7 +113,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/name"
-            app:layout_constraintBaseline_toBaselineOf="@+id/textViewName"
+            app:layout_constraintBaseline_toBaselineOf="@+id/textViewLastMessage"
             app:layout_constraintStart_toStartOf="@+id/textViewShowDescription" />
 
         <TextView

@@ -34,9 +34,9 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences = null;
     private PagerAdapter pagerAdapter = new PagerAdapter(getSupportFragmentManager());
 
-    private MainFragment mainFragment=new MainFragment();
-    private ChatFragment chatFragment=new ChatFragment();
-    private MyFragment myFragment=new MyFragment();
+    private MainFragment mainFragment = new MainFragment();
+    private ChatFragment chatFragment = new ChatFragment();
+    private MyFragment myFragment = new MyFragment();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,6 +121,7 @@ public class MainActivity extends AppCompatActivity {
                         app.setSkey(jsonObject.getString("data"));
                         myFragmentSetView();
                         mainFragmentSetView();
+                        chatFragmentSetView();
                     } else {
                         runOnUiThread(() -> Toast.makeText(MainActivity.this, R.string.login_fail, Toast.LENGTH_SHORT).show());
                     }
@@ -143,7 +144,12 @@ public class MainActivity extends AppCompatActivity {
         runOnUiThread(mainFragment::setView);
     }
 
+    public void chatFragmentSetView() {
+        runOnUiThread(chatFragment::setView);
+    }
+
     public void myFragmentSetView() {
         runOnUiThread(myFragment::setLoginView);
     }
+
 }

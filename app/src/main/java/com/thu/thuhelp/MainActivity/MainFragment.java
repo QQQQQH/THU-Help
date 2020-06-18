@@ -81,7 +81,7 @@ public class MainFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanced) {
         super.onViewCreated(view, savedInstanced);
-        swipeRefreshLayout = activity.findViewById(R.id.swipeRefreshLayout);
+        swipeRefreshLayout = activity.findViewById(R.id.swipeRefreshLayoutDeal);
         swipeRefreshLayout.setOnRefreshListener(() -> {
             Toast.makeText(activity, R.string.please_login, Toast.LENGTH_SHORT).show();
             swipeRefreshLayout.setRefreshing(false);
