@@ -10,9 +10,8 @@ import java.util.ArrayList;
 public class PagerAdapter extends FragmentPagerAdapter {
     private ArrayList<Fragment> fragments = new ArrayList<>();
 
-    public PagerAdapter(@NonNull FragmentManager fm) {
+    PagerAdapter(@NonNull FragmentManager fm) {
         super(fm);
-        this.fragments = fragments;
     }
 
     @NonNull
@@ -26,7 +25,7 @@ public class PagerAdapter extends FragmentPagerAdapter {
         return fragments.size();
     }
 
-    public void addFragment(Fragment fragment) {
+    void addFragment(Fragment fragment) {
         fragments.add(fragment);
     }
 }

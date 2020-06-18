@@ -1,6 +1,5 @@
 package com.thu.thuhelp.MainActivity;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
@@ -8,11 +7,11 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.thu.thuhelp.App;
+import com.thu.thuhelp.ChatActivity.ChatActivity;
 import com.thu.thuhelp.R;
 import com.thu.thuhelp.utils.CommonInterface;
 
@@ -35,6 +34,10 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences = null;
     private PagerAdapter pagerAdapter = new PagerAdapter(getSupportFragmentManager());
 
+    private MainFragment mainFragment=new MainFragment();
+    private ChatFragment chatFragment=new ChatFragment();
+    private MyFragment myFragment=new MyFragment();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,10 +49,12 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         viewPager = findViewById(R.id.pager);
 
-        pagerAdapter.addFragment(new MainFragment());
-        pagerAdapter.addFragment(new MyFragment());
+        pagerAdapter.addFragment(mainFragment);
+        pagerAdapter.addFragment(chatFragment);
+        pagerAdapter.addFragment(myFragment);
 
         viewPager.setAdapter(pagerAdapter);
+        viewPager.setOffscreenPageLimit(2);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -69,8 +74,11 @@ public class MainActivity extends AppCompatActivity {
                         case R.id.item_main_page:
                             viewPager.setCurrentItem(0);
                             return true;
-                        case R.id.item_my_page:
+                        case R.id.item_chat_page:
                             viewPager.setCurrentItem(1);
+                            return true;
+                        case R.id.item_my_page:
+                            viewPager.setCurrentItem(2);
                             return true;
                     }
                     return false;
@@ -124,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void logout() {
-        ((MyFragment) pagerAdapter.getItem(1)).setLogoutView();
+        myFragment.setLogoutView();
         SharedPreferences.Editor preferencesEditor = sharedPreferences.edit();
         preferencesEditor.clear();
         preferencesEditor.apply();
@@ -132,12 +140,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void mainFragmentSetView() {
-        MainFragment mainFragment = (MainFragment) (pagerAdapter.getItem(0));
         runOnUiThread(mainFragment::setView);
     }
 
     public void myFragmentSetView() {
-        MyFragment myFragment = (MyFragment) (pagerAdapter.getItem(1));
         runOnUiThread(myFragment::setLoginView);
     }
 }
