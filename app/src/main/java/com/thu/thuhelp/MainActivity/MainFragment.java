@@ -197,8 +197,8 @@ public class MainFragment extends Fragment {
                 updateDealList();
             } else if (requestCode == REQUEST_INFO) {
                 Toast.makeText(activity, R.string.accept_deal_success, Toast.LENGTH_SHORT).show();
-                dealList.remove(clickedPosition);
-                adapter.notifyDataSetChanged();
+//                dealList.remove(clickedPosition);
+//                adapter.notifyDataSetChanged();
                 updateDealList();
             }
         }
