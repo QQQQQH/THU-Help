@@ -1,6 +1,7 @@
 package com.thu.thuhelp.MainActivity;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -85,14 +86,21 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatVi
     @Override
     public void onBindViewHolder(@NonNull ChatViewHolder holder, int position) {
         ChatAbstract chatAbstract = chatAbstractList.get(position);
-        holder.textViewNickname.setText(R.string.nickname);
         holder.textViewLastMsg.setText(chatAbstract.lastMsg);
         holder.imageViewAvatar.setImageResource(R.drawable.ic_person);
 
         String uid = chatAbstract.uid;
 
-        Bitmap avatar;
+        SharedPreferences sharedPreferences = holder.itemView.getContext().getSharedPreferences(
+                "nickName", Context.MODE_PRIVATE);
+        String nickName = sharedPreferences.getString(uid, null);
+        if (nickName != null) {
+            holder.textViewNickname.setText(nickName);
+        } else {
+            holder.textViewNickname.setText(R.string.nickname);
+        }
 
+        Bitmap avatar;
         File avatarFile = new File(new File(app.getFilesDir(), "images"), "avatar" + uid + ".jpg");
         try {
             avatar = BitmapFactory.decodeStream(app.getContentResolver().openInputStream(Uri.fromFile(avatarFile)));
@@ -102,6 +110,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatVi
         if (avatar != null) {
             holder.imageViewAvatar.setImageBitmap(avatar);
         }
+
 
         HashMap<String, String> params = new HashMap<>();
         params.put("skey", app.getSkey());
@@ -127,6 +136,9 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatVi
 
                         String nickName = userInfo.getString("nickname");
                         handler.post(() -> holder.textViewNickname.setText(nickName));
+                        SharedPreferences.Editor preferencesEditor = sharedPreferences.edit();
+                        preferencesEditor.putString(uid, nickName);
+                        preferencesEditor.apply();
 
                         String avatarString = userInfo.getString("avatar");
                         byte[] avatarBytes = Base64.getDecoder().decode(avatarString);
