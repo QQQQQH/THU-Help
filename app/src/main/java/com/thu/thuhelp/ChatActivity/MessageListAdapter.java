@@ -48,7 +48,7 @@ public class MessageListAdapter
     private App app;
     private File avatarLeftFile;
 
-    public LinkedList<Message> messageList;
+    LinkedList<Message> messageList;
 
     MessageListAdapter(Context context, LinkedList<Message> messageList, Bitmap rightAvatar, String uid, App app) {
         inflater = LayoutInflater.from(context);

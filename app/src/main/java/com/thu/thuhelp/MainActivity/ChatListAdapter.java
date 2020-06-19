@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
@@ -28,6 +29,7 @@ import org.json.JSONObject;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Base64;
@@ -89,51 +91,62 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatVi
 
         String uid = chatAbstract.uid;
 
-        HashMap<String, String> params = new HashMap<>();
-        params.put("skey", app.getSkey());
-        params.put("uid", uid);
-        Handler handler = new Handler();
+        Bitmap avatar;
 
-        CommonInterface.sendOkHttpGetRequest("/user/account/info", params, new Callback() {
-            @Override
-            public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                Log.e("error", e.toString());
-            }
+        File avatarFile = new File(new File(app.getFilesDir(), "images"), "avatar" + uid + ".jpg");
+        try {
+            avatar = BitmapFactory.decodeStream(app.getContentResolver().openInputStream(Uri.fromFile(avatarFile)));
+        } catch (FileNotFoundException e) {
+            avatar = null;
+        }
+        if (avatar != null) {
+            holder.imageViewAvatar.setImageBitmap(avatar);
+        } else {
+            HashMap<String, String> params = new HashMap<>();
+            params.put("skey", app.getSkey());
+            params.put("uid", uid);
+            Handler handler = new Handler();
 
-            @RequiresApi(api = Build.VERSION_CODES.O)
-            @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                final String resStr = response.body().string();
-                Log.e("response", resStr);
-                try {
-                    JSONObject res = new JSONObject(resStr);
-                    int statusCode = res.getInt("status");
-                    if (statusCode == 200) {
-                        JSONObject userInfo = res.getJSONObject("data");
-
-                        String nickName = userInfo.getString("nickname");
-                        handler.post(() -> holder.textViewNickname.setText(nickName));
-
-                        String avatarString = userInfo.getString("avatar");
-                        byte[] avatarBytes = Base64.getDecoder().decode(avatarString);
-                        Bitmap avatar = BitmapFactory.decodeByteArray(avatarBytes, 0, avatarBytes.length);
-                        handler.post(() -> holder.imageViewAvatar.setImageBitmap(avatar));
-
-                        File avatarFile = new File(new File(app.getFilesDir(), "images"), "avatar" + uid + ".jpg");
-                        if (!avatarFile.getParentFile().exists()) {
-                            avatarFile.getParentFile().mkdirs();
-                        }
-                        FileOutputStream fos = new FileOutputStream(avatarFile);
-                        BufferedOutputStream bos = new BufferedOutputStream(fos);
-                        bos.write(avatarBytes);
-                        bos.close();
-                        fos.close();
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
+            CommonInterface.sendOkHttpGetRequest("/user/account/info", params, new Callback() {
+                @Override
+                public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                    Log.e("error", e.toString());
                 }
-            }
-        });
+
+                @RequiresApi(api = Build.VERSION_CODES.O)
+                @Override
+                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                    final String resStr = response.body().string();
+                    Log.e("response", resStr);
+                    try {
+                        JSONObject res = new JSONObject(resStr);
+                        int statusCode = res.getInt("status");
+                        if (statusCode == 200) {
+                            JSONObject userInfo = res.getJSONObject("data");
+
+                            String nickName = userInfo.getString("nickname");
+                            handler.post(() -> holder.textViewNickname.setText(nickName));
+
+                            String avatarString = userInfo.getString("avatar");
+                            byte[] avatarBytes = Base64.getDecoder().decode(avatarString);
+                            Bitmap avatar = BitmapFactory.decodeByteArray(avatarBytes, 0, avatarBytes.length);
+                            handler.post(() -> holder.imageViewAvatar.setImageBitmap(avatar));
+
+                            if (!avatarFile.getParentFile().exists()) {
+                                avatarFile.getParentFile().mkdirs();
+                            }
+                            FileOutputStream fos = new FileOutputStream(avatarFile);
+                            BufferedOutputStream bos = new BufferedOutputStream(fos);
+                            bos.write(avatarBytes);
+                            bos.close();
+                            fos.close();
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
 
         if (onItemClickListener != null) {
             holder.itemView.setOnClickListener(v -> onItemClickListener.onItemClick(v, position));

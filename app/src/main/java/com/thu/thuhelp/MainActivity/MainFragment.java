@@ -23,6 +23,7 @@ import android.widget.Toast;
 import com.thu.thuhelp.App;
 import com.thu.thuhelp.ChatActivity.ChatActivity;
 import com.thu.thuhelp.DealActivity.DealInfoActivity;
+import com.thu.thuhelp.DealActivity.DealListFragment;
 import com.thu.thuhelp.DealActivity.PublishDealActivity;
 import com.thu.thuhelp.R;
 import com.thu.thuhelp.utils.CommonInterface;
@@ -59,8 +60,6 @@ public class MainFragment extends Fragment {
     static private int
             REQUEST_PUBLISH = 0,
             REQUEST_INFO = 1;
-
-    public static final String EXTRA_DEAL = "com.thu.thuhelp.MainActivity.MainFragment.extra.deal";
 
     public MainFragment() {
         // Required empty public constructor
@@ -125,7 +124,7 @@ public class MainFragment extends Fragment {
         });
     }
 
-    public void setLogoutView(){
+    public void setLogoutView() {
 
     }
 
@@ -133,7 +132,7 @@ public class MainFragment extends Fragment {
 
         // set recycler view
         recyclerViewDeal = activity.findViewById(R.id.recyclerViewDeal);
-        adapter = new MissionListAdapter(activity, dealList,app);
+        adapter = new MissionListAdapter(activity, dealList, app);
 
         recyclerViewDeal.setAdapter(adapter);
         recyclerViewDeal.setLayoutManager(new LinearLayoutManager(activity));
@@ -145,7 +144,7 @@ public class MainFragment extends Fragment {
             clickedPosition = position;
             Deal deal = dealList.get(position);
             Intent intent = new Intent(activity, DealInfoActivity.class);
-            intent.putExtra(EXTRA_DEAL, deal);
+            intent.putExtra(DealListFragment.EXTRA_DEAL, deal);
             startActivityForResult(intent, REQUEST_INFO);
         });
     }

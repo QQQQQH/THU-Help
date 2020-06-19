@@ -182,6 +182,7 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        chatWebSocketClientService.resetUid();
         unregisterReceiver(chatMsgReceiver);
         unbindService(serviceConnection);
     }

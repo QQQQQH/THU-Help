@@ -4,15 +4,21 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.thu.thuhelp.App;
+import com.thu.thuhelp.ChatActivity.ChatActivity;
+import com.thu.thuhelp.MainActivity.ChatListFragment;
 import com.thu.thuhelp.MainActivity.MainFragment;
 import com.thu.thuhelp.R;
 import com.thu.thuhelp.utils.CommonInterface;
@@ -22,6 +28,8 @@ import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 
@@ -32,6 +40,7 @@ import okhttp3.Response;
 public class DealInfoActivity extends AppCompatActivity {
     private App app;
     private Deal deal;
+    private ImageView imageViewAvatar;
     private TextView
             textViewShowTitle,
             textViewShowDescription,
@@ -41,7 +50,7 @@ public class DealInfoActivity extends AppCompatActivity {
             textViewShowBonus,
             textViewShowStartTime,
             textViewShowEndTime;
-    private Button button1, button2;
+    private Button buttonPM, button1, button2;
 
     private int dealType;
 
@@ -58,27 +67,37 @@ public class DealInfoActivity extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         Intent intent = getIntent();
-        dealType = intent.getIntExtra(DealListFragment.EXTRA_DEAL_TYPE, -1);
+        deal = intent.getParcelableExtra(DealListFragment.EXTRA_DEAL);
+        dealType = intent.getIntExtra(DealListFragment.EXTRA_DEAL_TYPE, DealListFragment.DEAL_ALL_PUBLISH);
+
+        imageViewAvatar = findViewById(R.id.imageViewAvatar);
+        buttonPM = findViewById(R.id.buttonPM);
+        File avatarFile = new File(new File(getFilesDir(), "images"), "avatar" + deal.initiator + ".jpg");
+        try {
+            Bitmap avatar = BitmapFactory.decodeStream(getContentResolver().openInputStream(Uri.fromFile(avatarFile)));
+            imageViewAvatar.setImageBitmap(avatar);
+        } catch (FileNotFoundException e) {
+            imageViewAvatar.setImageDrawable(getResources().getDrawable(R.drawable.ic_account_circle));
+            e.printStackTrace();
+        }
 
         String buttonText1 = null, buttonText2 = null;
-        if (dealType == DealListFragment.DEAL_ALL_PUBLISH) {
-            deal = intent.getParcelableExtra(MainFragment.EXTRA_DEAL);
-            buttonText1 = "接收任务";
-        } else {
-            deal = intent.getParcelableExtra(DealListFragment.EXTRA_DEAL);
-            switch (dealType) {
-                case DealListFragment.DEAL_MY_PUBLISH:
-                    buttonText1 = "删除任务";
-                    break;
-                case DealListFragment.DEAL_OTHERS_ACCEPT:
-                    buttonText1 = "完成任务";
-                    buttonText2 = "放弃任务";
-                    break;
-                case DealListFragment.DEAL_MY_CONFIRM:
-                    buttonText1 = "确认完成";
-                    break;
-            }
+
+        switch (dealType) {
+            case DealListFragment.DEAL_ALL_PUBLISH:
+                buttonText1 = "接收任务";
+            case DealListFragment.DEAL_MY_PUBLISH:
+                buttonText1 = "删除任务";
+                break;
+            case DealListFragment.DEAL_OTHERS_ACCEPT:
+                buttonText1 = "完成任务";
+                buttonText2 = "放弃任务";
+                break;
+            case DealListFragment.DEAL_MY_CONFIRM:
+                buttonText1 = "确认完成";
+                break;
         }
+
         setView(buttonText1, buttonText2);
     }
 
@@ -121,6 +140,13 @@ public class DealInfoActivity extends AppCompatActivity {
                 button2.setVisibility(View.VISIBLE);
             }
         }
+    }
+
+
+    public void onPMClick(View view) {
+        Intent newIntent = new Intent(this, ChatActivity.class);
+        newIntent.putExtra(ChatListFragment.EXTRA_CHAT_UID, deal.initiator);
+        startActivity(newIntent);
     }
 
     public void onButton1Click(View view) {
@@ -303,6 +329,4 @@ public class DealInfoActivity extends AppCompatActivity {
             }
         });
     }
-
-
 }

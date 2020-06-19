@@ -3,6 +3,7 @@ package com.thu.thuhelp.MainActivity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
@@ -25,6 +26,10 @@ import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.HashMap;
@@ -62,7 +67,7 @@ public class MissionListAdapter extends RecyclerView.Adapter<MissionListAdapter.
 
         MissionViewHolder(@NonNull View itemView) {
             super(itemView);
-            textViewTitle = itemView.findViewById(R.id.textViewNickName);
+            textViewTitle = itemView.findViewById(R.id.textViewTitle);
             textViewName = itemView.findViewById(R.id.textViewLastMessage);
             textViewTime = itemView.findViewById(R.id.textViewTime);
             imageViewAvatar = itemView.findViewById(R.id.imageViewAvatar);
@@ -83,47 +88,69 @@ public class MissionListAdapter extends RecyclerView.Adapter<MissionListAdapter.
         String title = deal.title,
                 name = deal.name,
                 time = deal.startTime,
-                initiator = deal.initiator;
+                uid = deal.initiator;
         holder.textViewTitle.setText(title);
         holder.textViewName.setText(name);
         holder.textViewTime.setText(time);
         holder.imageViewAvatar.setImageResource(R.drawable.ic_person);
 
-        HashMap<String, String> params = new HashMap<>();
-        params.put("skey", app.getSkey());
-        params.put("uid", initiator);
-        Handler handler = new Handler();
+        Bitmap avatar;
 
-        CommonInterface.sendOkHttpGetRequest("/user/account/info", params, new Callback() {
-            @Override
-            public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                Log.e("error", e.toString());
-            }
+        File avatarFile = new File(new File(app.getFilesDir(), "images"), "avatar" + uid + ".jpg");
+        try {
+            avatar = BitmapFactory.decodeStream(app.getContentResolver().openInputStream(Uri.fromFile(avatarFile)));
+        } catch (FileNotFoundException e) {
+            avatar = null;
+        }
+        if (avatar != null) {
+            holder.imageViewAvatar.setImageBitmap(avatar);
+        } else {
+            HashMap<String, String> params = new HashMap<>();
+            params.put("skey", app.getSkey());
+            params.put("uid", uid);
+            Handler handler = new Handler();
 
-            @RequiresApi(api = Build.VERSION_CODES.O)
-            @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                final String resStr = response.body().string();
-                Log.e("response", resStr);
-                try {
-                    JSONObject res = new JSONObject(resStr);
-                    int statusCode = res.getInt("status");
-                    if (statusCode == 200) {
-                        JSONObject userInfo = res.getJSONObject("data");
-                        String avatarString = userInfo.getString("avatar");
-                        byte[] avatarBytes = Base64.getDecoder().decode(avatarString);
-                        Bitmap avatar = BitmapFactory.decodeByteArray(avatarBytes, 0, avatarBytes.length);
-                        handler.post(() -> holder.imageViewAvatar.setImageBitmap(avatar));
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
+            CommonInterface.sendOkHttpGetRequest("/user/account/info", params, new Callback() {
+                @Override
+                public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                    Log.e("error", e.toString());
                 }
-            }
-        });
 
+                @RequiresApi(api = Build.VERSION_CODES.O)
+                @Override
+                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                    final String resStr = response.body().string();
+                    Log.e("response", resStr);
+                    try {
+                        JSONObject res = new JSONObject(resStr);
+                        int statusCode = res.getInt("status");
+                        if (statusCode == 200) {
+                            JSONObject userInfo = res.getJSONObject("data");
+
+                            String avatarString = userInfo.getString("avatar");
+                            byte[] avatarBytes = Base64.getDecoder().decode(avatarString);
+                            Bitmap avatar = BitmapFactory.decodeByteArray(avatarBytes, 0, avatarBytes.length);
+                            handler.post(() -> holder.imageViewAvatar.setImageBitmap(avatar));
+
+                            if (!avatarFile.getParentFile().exists()) {
+                                avatarFile.getParentFile().mkdirs();
+                            }
+                            FileOutputStream fos = new FileOutputStream(avatarFile);
+                            BufferedOutputStream bos = new BufferedOutputStream(fos);
+                            bos.write(avatarBytes);
+                            bos.close();
+                            fos.close();
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
         if (onItemClickListener != null) {
             holder.itemView.setOnClickListener(v -> onItemClickListener.onItemClick(v, position));
         }
+
     }
 
     @Override

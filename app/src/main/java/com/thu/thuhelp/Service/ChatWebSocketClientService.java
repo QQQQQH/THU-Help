@@ -154,4 +154,8 @@ public class ChatWebSocketClientService extends Service {
         return messageList;
     }
 
+    public void resetUid() {
+        uid = null;
+    }
+
 }

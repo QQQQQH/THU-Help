@@ -18,19 +18,6 @@ import com.thu.thuhelp.App;
 import com.thu.thuhelp.ChatActivity.ChatActivity;
 import com.thu.thuhelp.R;
 import com.thu.thuhelp.utils.ChatAbstract;
-import com.thu.thuhelp.utils.ChatAbstractList;
-import com.thu.thuhelp.utils.Message;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.LinkedList;
 
 /**
