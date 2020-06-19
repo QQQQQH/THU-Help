@@ -101,52 +101,52 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatVi
         }
         if (avatar != null) {
             holder.imageViewAvatar.setImageBitmap(avatar);
-        } else {
-            HashMap<String, String> params = new HashMap<>();
-            params.put("skey", app.getSkey());
-            params.put("uid", uid);
-            Handler handler = new Handler();
-
-            CommonInterface.sendOkHttpGetRequest("/user/account/info", params, new Callback() {
-                @Override
-                public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                    Log.e("error", e.toString());
-                }
-
-                @RequiresApi(api = Build.VERSION_CODES.O)
-                @Override
-                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                    final String resStr = response.body().string();
-                    Log.e("response", resStr);
-                    try {
-                        JSONObject res = new JSONObject(resStr);
-                        int statusCode = res.getInt("status");
-                        if (statusCode == 200) {
-                            JSONObject userInfo = res.getJSONObject("data");
-
-                            String nickName = userInfo.getString("nickname");
-                            handler.post(() -> holder.textViewNickname.setText(nickName));
-
-                            String avatarString = userInfo.getString("avatar");
-                            byte[] avatarBytes = Base64.getDecoder().decode(avatarString);
-                            Bitmap avatar = BitmapFactory.decodeByteArray(avatarBytes, 0, avatarBytes.length);
-                            handler.post(() -> holder.imageViewAvatar.setImageBitmap(avatar));
-
-                            if (!avatarFile.getParentFile().exists()) {
-                                avatarFile.getParentFile().mkdirs();
-                            }
-                            FileOutputStream fos = new FileOutputStream(avatarFile);
-                            BufferedOutputStream bos = new BufferedOutputStream(fos);
-                            bos.write(avatarBytes);
-                            bos.close();
-                            fos.close();
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
         }
+
+        HashMap<String, String> params = new HashMap<>();
+        params.put("skey", app.getSkey());
+        params.put("uid", uid);
+        Handler handler = new Handler();
+
+        CommonInterface.sendOkHttpGetRequest("/user/account/info", params, new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                Log.e("error", e.toString());
+            }
+
+            @RequiresApi(api = Build.VERSION_CODES.O)
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                final String resStr = response.body().string();
+                Log.e("response", resStr);
+                try {
+                    JSONObject res = new JSONObject(resStr);
+                    int statusCode = res.getInt("status");
+                    if (statusCode == 200) {
+                        JSONObject userInfo = res.getJSONObject("data");
+
+                        String nickName = userInfo.getString("nickname");
+                        handler.post(() -> holder.textViewNickname.setText(nickName));
+
+                        String avatarString = userInfo.getString("avatar");
+                        byte[] avatarBytes = Base64.getDecoder().decode(avatarString);
+                        Bitmap avatar = BitmapFactory.decodeByteArray(avatarBytes, 0, avatarBytes.length);
+                        handler.post(() -> holder.imageViewAvatar.setImageBitmap(avatar));
+
+                        if (!avatarFile.getParentFile().exists()) {
+                            avatarFile.getParentFile().mkdirs();
+                        }
+                        FileOutputStream fos = new FileOutputStream(avatarFile);
+                        BufferedOutputStream bos = new BufferedOutputStream(fos);
+                        bos.write(avatarBytes);
+                        bos.close();
+                        fos.close();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
 
         if (onItemClickListener != null) {
             holder.itemView.setOnClickListener(v -> onItemClickListener.onItemClick(v, position));

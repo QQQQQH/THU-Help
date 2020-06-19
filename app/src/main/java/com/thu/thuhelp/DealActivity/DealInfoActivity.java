@@ -86,6 +86,7 @@ public class DealInfoActivity extends AppCompatActivity {
         switch (dealType) {
             case DealListFragment.DEAL_ALL_PUBLISH:
                 buttonText1 = "接收任务";
+                break;
             case DealListFragment.DEAL_MY_PUBLISH:
                 buttonText1 = "删除任务";
                 break;

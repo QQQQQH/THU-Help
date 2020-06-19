@@ -191,7 +191,7 @@ public class DealListFragment extends Fragment {
                     JSONObject res = new JSONObject(resStr);
                     int statusCode = res.getInt("status");
                     if (statusCode == 200) {
-                        activity.runOnUiThread(() -> Toast.makeText(activity, R.string.get_deal_list_success, Toast.LENGTH_SHORT).show());
+//                        activity.runOnUiThread(() -> Toast.makeText(activity, R.string.get_deal_list_success, Toast.LENGTH_SHORT).show());
 
                         JSONArray jsonDealList = res.getJSONArray("data");
                         dealList.clear();

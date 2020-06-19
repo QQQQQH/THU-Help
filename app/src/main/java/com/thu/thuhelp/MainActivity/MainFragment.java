@@ -94,11 +94,6 @@ public class MainFragment extends Fragment {
             startActivityForResult(intent, REQUEST_PUBLISH);
         });
 
-        activity.findViewById(R.id.fabChat).setOnClickListener(v -> {
-            Intent intent = new Intent(activity, ChatActivity.class);
-            startActivity(intent);
-        });
-
         // set swipe refresh layout
         swipeRefreshLayout.setOnRefreshListener(this::updateDealList);
         setRecyclerView();
@@ -169,7 +164,7 @@ public class MainFragment extends Fragment {
                     JSONObject res = new JSONObject(resStr);
                     int statusCode = res.getInt("status");
                     if (statusCode == 200) {
-                        activity.runOnUiThread(() -> Toast.makeText(activity, R.string.get_deal_list_success, Toast.LENGTH_SHORT).show());
+//                        activity.runOnUiThread(() -> Toast.makeText(activity, R.string.get_deal_list_success, Toast.LENGTH_SHORT).show());
 
                         JSONArray jsonDealList = res.getJSONArray("data");
                         dealList.clear();
