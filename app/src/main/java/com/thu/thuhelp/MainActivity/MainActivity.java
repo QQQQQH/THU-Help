@@ -255,6 +255,7 @@ public class MainActivity extends AppCompatActivity {
             int type = intent.getIntExtra(ChatWebSocketClientService.EXTRA_NOT_TYPE, 1);
             Log.e("Not Receiver-Main", text + "  " + type);
             sendNotification(text);
+            myFragment.addBadge(type, 1);
         }
     }
 

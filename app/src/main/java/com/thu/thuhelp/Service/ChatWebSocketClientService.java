@@ -143,7 +143,7 @@ public class ChatWebSocketClientService extends Service {
             int type = jsonMsg.getInt("notificationType");
 
             Intent intent = new Intent();
-            intent.setAction(ACTION_ALL_MESSAGE);
+            intent.setAction(ACTION_NOT_MESSAGE);
             intent.putExtra(EXTRA_NOT_TEXT, text);
             intent.putExtra(EXTRA_NOT_TYPE, type);
             sendBroadcast(intent);
