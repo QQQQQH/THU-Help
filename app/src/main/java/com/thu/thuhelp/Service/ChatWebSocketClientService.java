@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
+import android.os.Parcelable;
 
 import com.thu.thuhelp.utils.ChatAbstract;
 import com.thu.thuhelp.utils.ChatAbstractList;
@@ -31,7 +32,10 @@ public class ChatWebSocketClientService extends Service {
     public static final String
             ACTION_ALL_MESSAGE = "com.thu.thuhelp.Service.ChatWebSocketClientService.action.all_message",
             ACTION_UID_MESSAGE = "com.thu.thuhelp.Service.ChatWebSocketClientService.action.uid_message",
-            EXTRA_MESSAGE = "com.thu.thuhelp.Service.ChatWebSocketClientService.extra.message";
+            ACTION_NOT_MESSAGE = "com.thu.thuhelp.Service.ChatWebSocketClientService.action.not_message",
+            EXTRA_MESSAGE = "com.thu.thuhelp.Service.ChatWebSocketClientService.extra.message",
+            EXTRA_NOT_TEXT = "com.thu.thuhelp.Service.ChatWebSocketClientService.extra.not_text",
+            EXTRA_NOT_TYPE = "com.thu.thuhelp.Service.ChatWebSocketClientService.extra.not_type";
 
     public class ChatWebSocketClientBinder extends Binder {
         public ChatWebSocketClientService getService() {
@@ -84,19 +88,33 @@ public class ChatWebSocketClientService extends Service {
             int statusCode = res.getInt("status");
             if (statusCode == 200) {
                 int type = res.getInt("type");
-                if (type == 0) {
-                    return;
-                }
-                if (type == 1) {
-                    JSONObject jsonMsg = res.getJSONObject("data");
-                    receiveSingle(jsonMsg);
-                } else if (type == 2) {
-                    JSONArray msgList = res.getJSONArray("data");
-                    int length = msgList.length();
-                    for (int i = 0; i < length; ++i) {
-                        JSONObject jsonMsg = msgList.getJSONObject(i);
+                switch (type) {
+                    case 0:
+                        return;
+                    case 1:
+                        JSONObject jsonMsg = res.getJSONObject("data");
                         receiveSingle(jsonMsg);
-                    }
+                        break;
+                    case 2:
+                        JSONArray msgList = res.getJSONArray("data");
+                        int length = msgList.length();
+                        for (int i = 0; i < length; ++i) {
+                            jsonMsg = msgList.getJSONObject(i);
+                            receiveSingle(jsonMsg);
+                        }
+                        break;
+                    case 3:
+                        jsonMsg = res.getJSONObject("data");
+                        receiveNotification(jsonMsg);
+                        break;
+                    case 4:
+                        msgList = res.getJSONArray("data");
+                        length = msgList.length();
+                        for (int i = 0; i < length; ++i) {
+                            jsonMsg = msgList.getJSONObject(i);
+                            receiveNotification(jsonMsg);
+                        }
+                        break;
                 }
             }
         } catch (JSONException e) {
@@ -119,6 +137,22 @@ public class ChatWebSocketClientService extends Service {
 
     }
 
+    private void receiveNotification(JSONObject jsonMsg) {
+        try {
+            String text = jsonMsg.getString("notificationText");
+            int type = jsonMsg.getInt("notificationType");
+
+            Intent intent = new Intent();
+            intent.setAction(ACTION_ALL_MESSAGE);
+            intent.putExtra(EXTRA_NOT_TEXT, text);
+            intent.putExtra(EXTRA_NOT_TYPE, type);
+            sendBroadcast(intent);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void updateChatList(Message message, String uid) {
         ChatAbstract chatAbstract = chatAbstractList.getAbstractByUid(uid);
         if (chatAbstract == null) {
@@ -131,7 +165,7 @@ public class ChatWebSocketClientService extends Service {
         }
         Intent intent = new Intent();
         intent.setAction(ACTION_ALL_MESSAGE);
-        intent.putExtra(EXTRA_MESSAGE, message.content);
+        intent.putExtra(EXTRA_MESSAGE, (Parcelable) message);
         sendBroadcast(intent);
         chatIO.saveChatList();
     }
@@ -141,7 +175,7 @@ public class ChatWebSocketClientService extends Service {
             messageList.addFirst(message);
             Intent intent = new Intent();
             intent.setAction(ACTION_UID_MESSAGE);
-            intent.putExtra(EXTRA_MESSAGE, message.content);
+            intent.putExtra(EXTRA_MESSAGE, (Parcelable) message);
             sendBroadcast(intent);
             chatIO.updateChatCurrent(message, uid);
         } else {

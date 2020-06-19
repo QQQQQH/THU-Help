@@ -123,7 +123,11 @@ public class ChatActivity extends AppCompatActivity {
                 map.put("skey", app.getSkey());
                 map.put("to", uid);
                 JSONObject jsonObject = new JSONObject(map);
-                client.send(jsonObject.toString());
+                try {
+                    client.send(jsonObject.toString());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 chatWebSocketClientService.updateChat(message, uid);
                 chatWebSocketClientService.updateChatList(message, uid);
             }
@@ -172,9 +176,9 @@ public class ChatActivity extends AppCompatActivity {
     private class ChatMsgReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            String message = intent.getStringExtra(ChatWebSocketClientService.EXTRA_MESSAGE);
+            Message message = intent.getParcelableExtra(ChatWebSocketClientService.EXTRA_MESSAGE);
             assert message != null;
-            Log.e("Chat! Receiver-Chat", message);
+            Log.e("Chat! Receiver-Chat", message.content);
             adapter.notifyDataSetChanged();
         }
     }
