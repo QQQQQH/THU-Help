@@ -1,7 +1,5 @@
 package com.thu.thuhelp.utils;
 
-import android.widget.ScrollView;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -109,9 +107,6 @@ public class ChatIO {
     public void updateChatCurrent(Message message, String uid) {
         try {
             File chatFile = new File(chatDir, uid);
-
-            // add
-            messageList.addFirst(message);
 
             // write
             ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(chatFile));

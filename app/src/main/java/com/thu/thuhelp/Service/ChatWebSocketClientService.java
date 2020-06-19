@@ -22,7 +22,7 @@ public class ChatWebSocketClientService extends Service {
     public ChatWebSocketClient client;
     public final ChatAbstractList chatAbstractList = new ChatAbstractList();
     public final LinkedList<ChatAbstract> chatList = chatAbstractList.chatList;
-    public final LinkedList<Message> messagesList = new LinkedList<>();
+    public final LinkedList<Message> messageList = new LinkedList<>();
 
     private ChatWebSocketClientBinder binder = new ChatWebSocketClientBinder();
     private ChatIO chatIO = null;
@@ -51,17 +51,13 @@ public class ChatWebSocketClientService extends Service {
         if (client != null) {
             return;
         }
-        chatIO = new ChatIO(dir, chatList, messagesList);
+        chatIO = new ChatIO(dir, chatList, messageList);
         chatIO.getChatList();
 
         URI uri = URI.create("ws://123.57.140.189/websocket/" + skey);
         client = new ChatWebSocketClient(uri) {
             @Override
             public void onMessage(String message) {
-                Intent intent = new Intent();
-                intent.setAction(ACTION_ALL_MESSAGE);
-                intent.putExtra(EXTRA_MESSAGE, message);
-                sendBroadcast(intent);
                 receiveMsg(message);
             }
         };
@@ -78,7 +74,7 @@ public class ChatWebSocketClientService extends Service {
             client = null;
             chatIO = null;
             chatList.clear();
-            messagesList.clear();
+            messageList.clear();
         }
     }
 
@@ -114,35 +110,48 @@ public class ChatWebSocketClientService extends Service {
             String messageText = jsonMsg.getString("messageText");
             String timeStamp = jsonMsg.getString("sendTime");
 
-            ChatAbstract chatAbstract = chatAbstractList.getAbstractByUid(uid);
             Message message = new Message(messageText, timeStamp, Message.TYPE_RECEIVED);
-            if (chatAbstract == null) {
-                chatList.addFirst(new ChatAbstract(uid, messageText, timeStamp));
-            } else {
-                chatAbstractList.chatList.remove(chatAbstract);
-                chatAbstract.timeStamp = timeStamp;
-                chatAbstract.lastMsg = messageText;
-                chatAbstractList.chatList.addFirst(chatAbstract);
-            }
-            chatIO.saveChatList();
-            Intent intent = new Intent();
-            if (this.uid.equals(uid)) {
-                intent.setAction(ACTION_UID_MESSAGE);
-                intent.putExtra(EXTRA_MESSAGE, jsonMsg.toString());
-                sendBroadcast(intent);
-                chatIO.updateChatCurrent(message, uid);
-            } else {
-                chatIO.updateChat(message, uid);
-            }
+            updateChatList(message, uid);
+            updateChat(message, uid);
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
     }
 
+    public void updateChatList(Message message, String uid) {
+        ChatAbstract chatAbstract = chatAbstractList.getAbstractByUid(uid);
+        if (chatAbstract == null) {
+            chatList.addFirst(new ChatAbstract(uid, message.content, message.timeStamp));
+        } else {
+            chatAbstractList.chatList.remove(chatAbstract);
+            chatAbstract.timeStamp = message.timeStamp;
+            chatAbstract.lastMsg = message.content;
+            chatAbstractList.chatList.addFirst(chatAbstract);
+        }
+        Intent intent = new Intent();
+        intent.setAction(ACTION_ALL_MESSAGE);
+        intent.putExtra(EXTRA_MESSAGE, message.content);
+        sendBroadcast(intent);
+        chatIO.saveChatList();
+    }
+
+    public void updateChat(Message message, String uid) {
+        if (this.uid != null && this.uid.equals(uid)) {
+            messageList.addFirst(message);
+            Intent intent = new Intent();
+            intent.setAction(ACTION_UID_MESSAGE);
+            intent.putExtra(EXTRA_MESSAGE, message.content);
+            sendBroadcast(intent);
+            chatIO.updateChatCurrent(message, uid);
+        } else {
+            chatIO.updateChat(message, uid);
+        }
+    }
+
     public LinkedList<Message> getChat() {
         chatIO.getChat(uid);
-        return messagesList;
+        return messageList;
     }
 
 }

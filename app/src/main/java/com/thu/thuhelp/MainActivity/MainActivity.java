@@ -196,7 +196,7 @@ public class MainActivity extends AppCompatActivity {
                 chatWebSocketClientService = binder.getService();
 
                 // connect client
-                chatWebSocketClientService.connectClient(app.getSkey(), app.getDir(),null);
+                chatWebSocketClientService.connectClient(app.getSkey(), app.getDir(), null);
                 client = chatWebSocketClientService.client;
                 chatList = chatWebSocketClientService.chatList;
                 chatListFragment.setChatList(chatList);
@@ -230,5 +230,12 @@ public class MainActivity extends AppCompatActivity {
             Log.e("Chat Receiver-Main", message);
             chatListFragment.updateView();
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(chatMsgReceiver);
+        unbindService(serviceConnection);
     }
 }

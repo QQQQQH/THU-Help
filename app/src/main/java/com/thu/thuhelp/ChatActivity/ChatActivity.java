@@ -29,9 +29,13 @@ import com.thu.thuhelp.Service.ChatWebSocketClient;
 import com.thu.thuhelp.Service.ChatWebSocketClientService;
 import com.thu.thuhelp.utils.Message;
 
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 
 public class ChatActivity extends AppCompatActivity {
@@ -113,7 +117,16 @@ public class ChatActivity extends AppCompatActivity {
         String content = editTextMessage.getText().toString();
         if (!content.equals("")) {
             Message message = new Message(content, "0", Message.TYPE_SEND);
-            adapter.messageList.addFirst(message);
+            if (client != null) {
+                HashMap<String, String> map = new HashMap<>();
+                map.put("messageText", content);
+                map.put("skey", app.getSkey());
+                map.put("to", uid);
+                JSONObject jsonObject = new JSONObject(map);
+                client.send(jsonObject.toString());
+                chatWebSocketClientService.updateChat(message, uid);
+                chatWebSocketClientService.updateChatList(message, uid);
+            }
             adapter.notifyDataSetChanged();
             editTextMessage.setText("");
             recyclerViewChat.smoothScrollToPosition(0);
@@ -161,8 +174,15 @@ public class ChatActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             String message = intent.getStringExtra(ChatWebSocketClientService.EXTRA_MESSAGE);
             assert message != null;
-            Log.e("Chat Receiver-Chat", message);
+            Log.e("Chat! Receiver-Chat", message);
             adapter.notifyDataSetChanged();
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(chatMsgReceiver);
+        unbindService(serviceConnection);
     }
 }

@@ -84,8 +84,8 @@ public class LoginActivity extends AppCompatActivity {
                         // set skey and uid
                         String uid = data.getString("uid");
                         App app = (App) getApplication();
-                        app.setSkey(data.getString("skey"));
                         app.setUid(uid);
+                        app.setSkey(data.getString("skey"));
 
                         // save sid, password amd iod
                         SharedPreferences sharedPreferences = getSharedPreferences(

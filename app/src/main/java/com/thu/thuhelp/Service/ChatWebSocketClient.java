@@ -29,5 +29,6 @@ public class ChatWebSocketClient extends WebSocketClient {
     @Override
     public void onError(Exception ex) {
         Log.e("ChatWebSocketClient", "onError");
+        ex.printStackTrace();
     }
 }
