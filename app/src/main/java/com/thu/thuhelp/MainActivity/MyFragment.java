@@ -52,6 +52,7 @@ import java.util.Objects;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
+import q.rorbin.badgeview.QBadgeView;
 
 
 /**
@@ -72,6 +73,10 @@ public class MyFragment extends Fragment {
     private File avatarTemp;
 
     private MainActivity activity;
+    private QBadgeView myAcceptBadge;
+    private QBadgeView myConfirmBadge;
+    private QBadgeView myFinishBadge;
+
     private App app;
     private View view;
     private boolean login;
@@ -111,6 +116,9 @@ public class MyFragment extends Fragment {
         super.onViewCreated(view, savedInstanced);
 
         ((ImageView) view.findViewById(R.id.avatarView)).setImageDrawable(getResources().getDrawable(R.drawable.ic_account_circle));
+        myAcceptBadge = (QBadgeView) new QBadgeView(activity).bindTarget(view.findViewById(R.id.buttonMyAccept));
+        myConfirmBadge = (QBadgeView) new QBadgeView(activity).bindTarget(view.findViewById(R.id.buttonMyConfirm));
+        myFinishBadge = (QBadgeView) new QBadgeView(activity).bindTarget(view.findViewById(R.id.buttonMyFinish));
 
         view.findViewById(R.id.buttonLogin).setOnClickListener(v -> {
             Intent intent = new Intent(activity, LoginActivity.class);
@@ -148,18 +156,21 @@ public class MyFragment extends Fragment {
         });
 
         view.findViewById(R.id.buttonMyAccept).setOnClickListener(v -> {
+            myAcceptBadge.setBadgeNumber(0);
             Intent intent = new Intent(activity, DealListActivity.class);
             intent.putExtra(EXTRA_DEAL_STATE, DEAL_ACCEPT);
             startActivity(intent);
         });
 
         view.findViewById(R.id.buttonMyConfirm).setOnClickListener(v -> {
+            myConfirmBadge.setBadgeNumber(0);
             Intent intent = new Intent(activity, DealListActivity.class);
             intent.putExtra(EXTRA_DEAL_STATE, DEAL_CONFIRM);
             startActivity(intent);
         });
 
         view.findViewById(R.id.buttonMyFinish).setOnClickListener(v -> {
+            myFinishBadge.setBadgeNumber(0);
             Intent intent = new Intent(activity, DealListActivity.class);
             intent.putExtra(EXTRA_DEAL_STATE, DEAL_FINISH);
             startActivity(intent);
@@ -511,5 +522,21 @@ public class MyFragment extends Fragment {
                 }
             }
         });
+    }
+
+    public void addBadge(int type, int num) {
+        switch (type) {
+            case 1:
+                myAcceptBadge.setBadgeNumber(myAcceptBadge.getBadgeNumber() + num);
+                break;
+            case 2:
+                myConfirmBadge.setBadgeNumber(myConfirmBadge.getBadgeNumber() + num);
+                break;
+            case 3:
+                myFinishBadge.setBadgeNumber(myFinishBadge.getBadgeNumber() + num);
+                break;
+            default:
+                break;
+        }
     }
 }
