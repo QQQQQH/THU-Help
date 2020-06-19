@@ -50,7 +50,6 @@ public class ChatActivity extends AppCompatActivity {
     private ChatMsgReceiver chatMsgReceiver;
 
     private String uid;
-    private LinkedList<Message> messageList = new LinkedList<>();
     private File chatDir;
 
 
@@ -60,8 +59,8 @@ public class ChatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
         app = (App) getApplication();
-        setService();
         setView();
+        setService();
     }
 
     // set return actionBar
@@ -75,6 +74,9 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     void setView() {
+        Intent intent = getIntent();
+        uid = intent.getStringExtra(ChatListFragment.EXTRA_CHAT_UID);
+
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
         // set return actionBar
@@ -92,29 +94,26 @@ public class ChatActivity extends AppCompatActivity {
             rightAvatar = null;
             e.printStackTrace();
         }
-
         chatDir = new File(app.getDir(), "chat");
         if (!chatDir.exists()) {
             chatDir.mkdirs();
         }
-        Intent intent = getIntent();
-        uid = intent.getStringExtra(ChatListFragment.EXTRA_CHAT_UID);
-        messageList = chatWebSocketClientService.getChat(uid);
 
         recyclerViewChat = findViewById(R.id.recyclerViewChat);
-        adapter = new MessageListAdapter(this, messageList, rightAvatar, uid, app);
+        adapter = new MessageListAdapter(this, new LinkedList<>(), rightAvatar, uid, app);
 
         // reverse layout
         recyclerViewChat.setAdapter(adapter);
-        recyclerViewChat.setLayoutManager(new LinearLayoutManager(
-                this, LinearLayoutManager.VERTICAL, true));
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(
+                this, LinearLayoutManager.VERTICAL, true);
+        recyclerViewChat.setLayoutManager(linearLayoutManager);
     }
 
     public void onClickSend(View view) {
         String content = editTextMessage.getText().toString();
         if (!content.equals("")) {
             Message message = new Message(content, "0", Message.TYPE_SEND);
-            messageList.addFirst(message);
+            adapter.messageList.addFirst(message);
             adapter.notifyDataSetChanged();
             editTextMessage.setText("");
             recyclerViewChat.smoothScrollToPosition(0);
@@ -131,8 +130,16 @@ public class ChatActivity extends AppCompatActivity {
                 chatWebSocketClientService = binder.getService();
 
                 // connect client
-                chatWebSocketClientService.connectClient(app.getSkey(), app.getDir());
+                chatWebSocketClientService.connectClient(app.getSkey(), app.getDir(), uid);
                 client = chatWebSocketClientService.client;
+                adapter.messageList = chatWebSocketClientService.getChat();
+                adapter.notifyDataSetChanged();
+
+
+                // register receiver
+                chatMsgReceiver = new ChatMsgReceiver();
+                IntentFilter filter = new IntentFilter(ChatWebSocketClientService.ACTION_UID_MESSAGE);
+                registerReceiver(chatMsgReceiver, filter);
             }
 
             @Override
@@ -147,11 +154,6 @@ public class ChatActivity extends AppCompatActivity {
         Intent intent;
         intent = new Intent(this, ChatWebSocketClientService.class);
         bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
-
-        // register receiver
-        chatMsgReceiver = new ChatMsgReceiver();
-        IntentFilter filter = new IntentFilter(ChatWebSocketClientService.ACTION_MESSAGE);
-        registerReceiver(chatMsgReceiver, filter);
     }
 
     private class ChatMsgReceiver extends BroadcastReceiver {
@@ -160,6 +162,7 @@ public class ChatActivity extends AppCompatActivity {
             String message = intent.getStringExtra(ChatWebSocketClientService.EXTRA_MESSAGE);
             assert message != null;
             Log.e("Chat Receiver-Chat", message);
+            adapter.notifyDataSetChanged();
         }
     }
 }

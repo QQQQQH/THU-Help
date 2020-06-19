@@ -1,185 +1,197 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".DealActivity.DealInfoActivity">
+    android:layout_height="wrap_content"
+    tools:context=".DealActivity.DealInfoActivity"
+    android:orientation="vertical">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="100dp">
 
-        <TextView
-            android:id="@+id/textViewNickName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="64dp"
-            android:text="@string/title"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+    </LinearLayout>
 
-        <TextView
-            android:id="@+id/textViewShowTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="64dp"
-            android:text="@string/deal_title"
-            app:layout_constraintBaseline_toBaselineOf="@+id/textViewNickName"
-            app:layout_constraintStart_toEndOf="@+id/textViewNickName" />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
-        <TextView
-            android:id="@+id/textViewDescription"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="32dp"
-            android:text="@string/description"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textViewShowTitle" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/textViewLastMessage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="32dp"
-            android:text="@string/name"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textViewShowDescription" />
+            <TextView
+                android:id="@+id/textViewNickName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="64dp"
+                android:text="@string/title"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/textViewPhone"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="32dp"
-            android:text="@string/phone"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textViewShowName" />
+            <TextView
+                android:id="@+id/textViewShowTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="64dp"
+                android:text="@string/deal_title"
+                app:layout_constraintBaseline_toBaselineOf="@+id/textViewNickName"
+                app:layout_constraintStart_toEndOf="@+id/textViewNickName" />
 
-        <TextView
-            android:id="@+id/textViewAddress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="32dp"
-            android:text="@string/address"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textViewShowPhone" />
+            <TextView
+                android:id="@+id/textViewDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="32dp"
+                android:text="@string/description"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textViewShowTitle" />
 
-        <TextView
-            android:id="@+id/textViewBonus"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="32dp"
-            android:text="@string/bonus"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textViewShowAddress" />
+            <TextView
+                android:id="@+id/textViewLastMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="32dp"
+                android:text="@string/name"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textViewShowDescription" />
 
-        <TextView
-            android:id="@+id/textViewStartTime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="32dp"
-            android:text="@string/start_time"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textViewShowBonus" />
+            <TextView
+                android:id="@+id/textViewPhone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="32dp"
+                android:text="@string/phone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textViewShowName" />
 
-        <TextView
-            android:id="@+id/textViewEndTime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="32dp"
-            android:text="@string/end_time"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textViewShowStartTime" />
+            <TextView
+                android:id="@+id/textViewAddress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="32dp"
+                android:text="@string/address"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textViewShowPhone" />
 
-        <TextView
-            android:id="@+id/textViewShowDescription"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:text="@string/deal_description"
-            app:layout_constraintBaseline_toBaselineOf="@+id/textViewDescription"
-            app:layout_constraintStart_toStartOf="@+id/textViewShowTitle" />
+            <TextView
+                android:id="@+id/textViewBonus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="32dp"
+                android:text="@string/bonus"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textViewShowAddress" />
 
-        <TextView
-            android:id="@+id/textViewShowName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/name"
-            app:layout_constraintBaseline_toBaselineOf="@+id/textViewLastMessage"
-            app:layout_constraintStart_toStartOf="@+id/textViewShowDescription" />
+            <TextView
+                android:id="@+id/textViewStartTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="32dp"
+                android:text="@string/start_time"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textViewShowBonus" />
 
-        <TextView
-            android:id="@+id/textViewShowPhone"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/phone_number"
-            app:layout_constraintBaseline_toBaselineOf="@+id/textViewPhone"
-            app:layout_constraintStart_toStartOf="@+id/textViewShowName" />
+            <TextView
+                android:id="@+id/textViewEndTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="32dp"
+                android:text="@string/end_time"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textViewShowStartTime" />
 
-        <TextView
-            android:id="@+id/textViewShowAddress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/deal_address"
-            app:layout_constraintBaseline_toBaselineOf="@+id/textViewAddress"
-            app:layout_constraintStart_toStartOf="@+id/textViewShowPhone" />
+            <TextView
+                android:id="@+id/textViewShowDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:text="@string/deal_description"
+                app:layout_constraintBaseline_toBaselineOf="@+id/textViewDescription"
+                app:layout_constraintStart_toStartOf="@+id/textViewShowTitle" />
 
-        <TextView
-            android:id="@+id/textViewShowBonus"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/deal_bonus"
-            app:layout_constraintBaseline_toBaselineOf="@+id/textViewBonus"
-            app:layout_constraintStart_toStartOf="@+id/textViewShowAddress" />
+            <TextView
+                android:id="@+id/textViewShowName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/name"
+                app:layout_constraintBaseline_toBaselineOf="@+id/textViewLastMessage"
+                app:layout_constraintStart_toStartOf="@+id/textViewShowDescription" />
 
-        <TextView
-            android:id="@+id/textViewShowStartTime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/start_time"
-            app:layout_constraintBaseline_toBaselineOf="@+id/textViewStartTime"
-            app:layout_constraintStart_toStartOf="@+id/textViewShowBonus" />
+            <TextView
+                android:id="@+id/textViewShowPhone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/phone_number"
+                app:layout_constraintBaseline_toBaselineOf="@+id/textViewPhone"
+                app:layout_constraintStart_toStartOf="@+id/textViewShowName" />
 
-        <TextView
-            android:id="@+id/textViewShowEndTime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/end_time"
-            app:layout_constraintBaseline_toBaselineOf="@+id/textViewEndTime"
-            app:layout_constraintStart_toStartOf="@+id/textViewShowStartTime" />
+            <TextView
+                android:id="@+id/textViewShowAddress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/deal_address"
+                app:layout_constraintBaseline_toBaselineOf="@+id/textViewAddress"
+                app:layout_constraintStart_toStartOf="@+id/textViewShowPhone" />
 
-        <Button
-            android:id="@+id/button1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:onClick="onButton1Click"
-            android:visibility="invisible"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textViewShowEndTime" />
+            <TextView
+                android:id="@+id/textViewShowBonus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/deal_bonus"
+                app:layout_constraintBaseline_toBaselineOf="@+id/textViewBonus"
+                app:layout_constraintStart_toStartOf="@+id/textViewShowAddress" />
 
-        <Button
-            android:id="@+id/button2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="64dp"
-            android:onClick="onButton2Click"
-            android:visibility="invisible"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/button1" />
+            <TextView
+                android:id="@+id/textViewShowStartTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/start_time"
+                app:layout_constraintBaseline_toBaselineOf="@+id/textViewStartTime"
+                app:layout_constraintStart_toStartOf="@+id/textViewShowBonus" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</ScrollView>
+            <TextView
+                android:id="@+id/textViewShowEndTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/end_time"
+                app:layout_constraintBaseline_toBaselineOf="@+id/textViewEndTime"
+                app:layout_constraintStart_toStartOf="@+id/textViewShowStartTime" />
+
+            <Button
+                android:id="@+id/button1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:onClick="onButton1Click"
+                android:visibility="invisible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textViewShowEndTime" />
+
+            <Button
+                android:id="@+id/button2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="64dp"
+                android:onClick="onButton2Click"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/button1" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+</LinearLayout>
 

@@ -140,8 +140,11 @@ public class MainActivity extends AppCompatActivity {
                         JSONObject data = jsonObject.getJSONObject("data");
                         String uid = data.getString("uid");
                         App app = (App) getApplication();
-                        app.setSkey(data.getString("skey"));
                         app.setUid(uid);
+                        app.setSkey(data.getString("skey"));
+                        SharedPreferences.Editor preferencesEditor = sharedPreferences.edit();
+                        preferencesEditor.putString(getString(R.string.uid), uid);
+                        preferencesEditor.apply();
 
                         runOnUiThread(() -> onLogin());
                     } else {
@@ -180,7 +183,10 @@ public class MainActivity extends AppCompatActivity {
         myFragment.setLoginView();
         mainFragment.setLoginView();
         chatListFragment.setLoginView();
+        setService();
+    }
 
+    private void setService() {
         // bind service
         serviceConnection = new ServiceConnection() {
             @Override
@@ -190,9 +196,15 @@ public class MainActivity extends AppCompatActivity {
                 chatWebSocketClientService = binder.getService();
 
                 // connect client
-                chatWebSocketClientService.connectClient(app.getSkey(), app.getDir());
+                chatWebSocketClientService.connectClient(app.getSkey(), app.getDir(),null);
                 client = chatWebSocketClientService.client;
                 chatList = chatWebSocketClientService.chatList;
+                chatListFragment.setChatList(chatList);
+
+                // register receiver
+                chatMsgReceiver = new ChatMsgReceiver();
+                IntentFilter filter = new IntentFilter(ChatWebSocketClientService.ACTION_ALL_MESSAGE);
+                registerReceiver(chatMsgReceiver, filter);
             }
 
             @Override
@@ -208,11 +220,6 @@ public class MainActivity extends AppCompatActivity {
         Intent intent;
         intent = new Intent(this, ChatWebSocketClientService.class);
         bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
-
-        // register receiver
-        chatMsgReceiver = new ChatMsgReceiver();
-        IntentFilter filter = new IntentFilter(ChatWebSocketClientService.ACTION_MESSAGE);
-        registerReceiver(chatMsgReceiver, filter);
     }
 
     private class ChatMsgReceiver extends BroadcastReceiver {

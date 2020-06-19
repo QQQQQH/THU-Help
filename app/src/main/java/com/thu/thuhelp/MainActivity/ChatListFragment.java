@@ -79,7 +79,7 @@ public class ChatListFragment extends Fragment {
     void setLoginView() {
         // set recycler view
         recyclerViewChat = activity.findViewById(R.id.recyclerViewChat);
-        adapter = new ChatListAdapter(activity, activity.chatList, app);
+        adapter = new ChatListAdapter(activity, new LinkedList<>(), app);
 
         recyclerViewChat.setAdapter(adapter);
         recyclerViewChat.setLayoutManager(new LinearLayoutManager(activity));
@@ -95,6 +95,12 @@ public class ChatListFragment extends Fragment {
 
     void setLogoutView() {
         updateView();
+    }
+
+    public void setChatList(LinkedList<ChatAbstract> chatList) {
+        adapter.chatAbstractList = chatList;
+        adapter.notifyDataSetChanged();
+
     }
 
     public void updateView() {

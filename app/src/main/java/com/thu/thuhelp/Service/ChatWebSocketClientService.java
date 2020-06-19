@@ -22,12 +22,15 @@ public class ChatWebSocketClientService extends Service {
     public ChatWebSocketClient client;
     public final ChatAbstractList chatAbstractList = new ChatAbstractList();
     public final LinkedList<ChatAbstract> chatList = chatAbstractList.chatList;
+    public final LinkedList<Message> messagesList = new LinkedList<>();
 
     private ChatWebSocketClientBinder binder = new ChatWebSocketClientBinder();
     private ChatIO chatIO = null;
+    private String uid = null;
 
     public static final String
-            ACTION_MESSAGE = "com.thu.thuhelp.Service.ChatWebSocketClientService.action.message",
+            ACTION_ALL_MESSAGE = "com.thu.thuhelp.Service.ChatWebSocketClientService.action.all_message",
+            ACTION_UID_MESSAGE = "com.thu.thuhelp.Service.ChatWebSocketClientService.action.uid_message",
             EXTRA_MESSAGE = "com.thu.thuhelp.Service.ChatWebSocketClientService.extra.message";
 
     public class ChatWebSocketClientBinder extends Binder {
@@ -41,11 +44,14 @@ public class ChatWebSocketClientService extends Service {
         return binder;
     }
 
-    public void connectClient(String skey, File dir) {
+    public void connectClient(String skey, File dir, String uid) {
+        if (uid != null) {
+            this.uid = uid;
+        }
         if (client != null) {
             return;
         }
-        chatIO = new ChatIO(dir, chatList);
+        chatIO = new ChatIO(dir, chatList, messagesList);
         chatIO.getChatList();
 
         URI uri = URI.create("ws://123.57.140.189/websocket/" + skey);
@@ -53,7 +59,7 @@ public class ChatWebSocketClientService extends Service {
             @Override
             public void onMessage(String message) {
                 Intent intent = new Intent();
-                intent.setAction(ACTION_MESSAGE);
+                intent.setAction(ACTION_ALL_MESSAGE);
                 intent.putExtra(EXTRA_MESSAGE, message);
                 sendBroadcast(intent);
                 receiveMsg(message);
@@ -72,6 +78,7 @@ public class ChatWebSocketClientService extends Service {
             client = null;
             chatIO = null;
             chatList.clear();
+            messagesList.clear();
         }
     }
 
@@ -87,7 +94,6 @@ public class ChatWebSocketClientService extends Service {
                 if (type == 1) {
                     JSONObject jsonMsg = res.getJSONObject("data");
                     receiveSingle(jsonMsg);
-
                 } else if (type == 2) {
                     JSONArray msgList = res.getJSONArray("data");
                     int length = msgList.length();
@@ -119,16 +125,24 @@ public class ChatWebSocketClientService extends Service {
                 chatAbstractList.chatList.addFirst(chatAbstract);
             }
             chatIO.saveChatList();
-            chatIO.updateChat(message, uid);
-        } catch (
-                JSONException e) {
+            Intent intent = new Intent();
+            if (this.uid.equals(uid)) {
+                intent.setAction(ACTION_UID_MESSAGE);
+                intent.putExtra(EXTRA_MESSAGE, jsonMsg.toString());
+                sendBroadcast(intent);
+                chatIO.updateChatCurrent(message, uid);
+            } else {
+                chatIO.updateChat(message, uid);
+            }
+        } catch (JSONException e) {
             e.printStackTrace();
         }
 
     }
 
-    public LinkedList<Message> getChat(String uid) {
-        return chatIO.getChat(uid);
+    public LinkedList<Message> getChat() {
+        chatIO.getChat(uid);
+        return messagesList;
     }
 
 }

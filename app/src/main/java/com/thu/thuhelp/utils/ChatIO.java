@@ -1,5 +1,7 @@
 package com.thu.thuhelp.utils;
 
+import android.widget.ScrollView;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -10,11 +12,13 @@ import java.util.LinkedList;
 
 public class ChatIO {
     private File chatDir;
-    private LinkedList<ChatAbstract> chatList;
+    private final LinkedList<ChatAbstract> chatList;
+    public final LinkedList<Message> messageList;
 
-    public ChatIO(File dir, LinkedList<ChatAbstract> chatList) {
+    public ChatIO(File dir, LinkedList<ChatAbstract> chatList, LinkedList<Message> messageList) {
         this.chatDir = new File(dir, "chat");
         this.chatList = chatList;
+        this.messageList = messageList;
         if (!chatDir.exists()) {
             chatDir.mkdirs();
         }
@@ -35,8 +39,12 @@ public class ChatIO {
     }
 
     public void getChatList() {
+        chatList.clear();
         try {
             File chatListFile = new File(chatDir, "chat_list");
+            if (!chatListFile.exists()) {
+                return;
+            }
             FileInputStream fis = new FileInputStream(chatListFile);
             ObjectInputStream ois = new ObjectInputStream(fis);
             while (fis.available() > 0) {
@@ -49,39 +57,61 @@ public class ChatIO {
         }
     }
 
-    public LinkedList<Message> getChat(String uid) {
+    public void getChat(String uid) {
+        messageList.clear();
+        try {
+            File chatFile = new File(chatDir, uid);
+            if (chatFile.exists()) {
+                FileInputStream fis = new FileInputStream(chatFile);
+                ObjectInputStream ois = new ObjectInputStream(fis);
+                while (fis.available() > 0) {
+                    messageList.add((Message) ois.readObject());
+                }
+                ois.close();
+                fis.close();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateChat(Message message, String uid) {
         LinkedList<Message> messageList = new LinkedList<>();
         try {
             // read
             File chatFile = new File(chatDir, uid);
-            FileInputStream fis = new FileInputStream(chatFile);
-            ObjectInputStream ois = new ObjectInputStream(fis);
-            while (fis.available() > 0) {
-                messageList.add((Message) ois.readObject());
+            if (chatFile.exists()) {
+                FileInputStream fis = new FileInputStream(chatFile);
+                ObjectInputStream ois = new ObjectInputStream(fis);
+                while (fis.available() > 0) {
+                    messageList.add((Message) ois.readObject());
+                }
+                ois.close();
+                fis.close();
             }
-            ois.close();
-            fis.close();
+
+            // add
+            messageList.addFirst(message);
+
+            // write
+            ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(chatFile));
+            for (Message msg : messageList) {
+                oos.writeObject(msg);
+            }
+            oos.flush();
+            oos.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return messageList;
     }
 
-    public void updateChat(Message message, String uid) {
+    public void updateChatCurrent(Message message, String uid) {
         try {
-            // read
             File chatFile = new File(chatDir, uid);
-            FileInputStream fis = new FileInputStream(chatFile);
-            ObjectInputStream ois = new ObjectInputStream(fis);
-            LinkedList<Message> messageList = new LinkedList<>();
-            while (fis.available() > 0) {
-                messageList.add((Message) ois.readObject());
-            }
-            ois.close();
-            fis.close();
 
             // add
-            messageList.addLast(message);
+            messageList.addFirst(message);
 
             // write
             ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(chatFile));

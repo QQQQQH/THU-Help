@@ -43,11 +43,12 @@ import okhttp3.Response;
 public class MessageListAdapter
         extends RecyclerView.Adapter<MessageListAdapter.MessageViewHolder> {
     private LayoutInflater inflater;
-    private LinkedList<Message> messageList;
     private Bitmap leftAvatar, rightAvatar;
     private String uid;
     private App app;
     private File avatarLeftFile;
+
+    public LinkedList<Message> messageList;
 
     MessageListAdapter(Context context, LinkedList<Message> messageList, Bitmap rightAvatar, String uid, App app) {
         inflater = LayoutInflater.from(context);
