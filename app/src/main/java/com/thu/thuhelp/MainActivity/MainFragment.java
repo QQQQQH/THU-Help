@@ -88,7 +88,7 @@ public class MainFragment extends Fragment {
         });
     }
 
-    public void setView() {
+    public void setLoginView() {
         // set fab
         activity.findViewById(R.id.fabPublishDeal).setOnClickListener(v -> {
             Intent intent = new Intent(activity, PublishDealActivity.class);
@@ -123,6 +123,10 @@ public class MainFragment extends Fragment {
             adapter.notifyDataSetChanged();
             return false;
         });
+    }
+
+    public void setLogoutView(){
+
     }
 
     private void setRecyclerView() {

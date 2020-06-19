@@ -3,7 +3,9 @@ package com.thu.thuhelp.utils;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class Message implements Parcelable {
+import java.io.Serializable;
+
+public class Message implements Parcelable, Serializable {
     public static final int TYPE_RECEIVED = 0, TYPE_SEND = 1;
 
     public String content, timeStamp;
@@ -13,6 +15,11 @@ public class Message implements Parcelable {
         this.content = content;
         this.timeStamp = timeStamp;
         this.type = type;
+    }
+
+    @Override
+    public String toString() {
+        return "content=" + content + "\n timeStamp=" + timeStamp + "\n type=" + type;
     }
 
     protected Message(Parcel in) {

@@ -2,9 +2,6 @@ package com.thu.thuhelp.MainActivity;
 
 import android.content.ContentResolver;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -18,7 +15,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
-import android.os.FileUtils;
 import android.provider.MediaStore;
 import android.text.InputType;
 import android.util.Log;
@@ -51,7 +47,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Base64;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Objects;
 
 import okhttp3.Call;
@@ -128,7 +123,7 @@ public class MyFragment extends Fragment {
         });
 
         view.findViewById(R.id.buttonLogout).setOnClickListener(v -> {
-            activity.logout();
+            activity.onLogout();
         });
 
         view.findViewById(R.id.buttonCash).setOnClickListener(v -> {
@@ -178,9 +173,7 @@ public class MyFragment extends Fragment {
             switch (requestCode) {
                 case REQUEST_LOGIN:
                     Toast.makeText(activity, R.string.login_success, Toast.LENGTH_SHORT).show();
-                    activity.myFragmentSetView();
-                    activity.mainFragmentSetView();
-                    activity.chatFragmentSetView();
+                    activity.onLogin();
                     break;
                 case REQUEST_REGISTER:
                     Toast.makeText(activity, R.string.register_success, Toast.LENGTH_SHORT).show();

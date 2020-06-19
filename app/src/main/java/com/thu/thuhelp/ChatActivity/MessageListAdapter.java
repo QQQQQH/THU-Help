@@ -145,10 +145,13 @@ public class MessageListAdapter
             holder.leftLayout.setVisibility(View.GONE);
             holder.rightLayout.setVisibility(View.VISIBLE);
             holder.textViewRightMsg.setText(message.content);
-            holder.imageViewAvatarRight.setImageBitmap(rightAvatar);
+            if (rightAvatar != null) {
+                holder.imageViewAvatarRight.setImageBitmap(rightAvatar);
+            } else {
+                holder.imageViewAvatarRight.setImageDrawable(
+                        holder.itemView.getResources().getDrawable(R.drawable.ic_account_circle));
+            }
         }
-
-
     }
 
     @Override

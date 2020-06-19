@@ -14,6 +14,10 @@ public class ChatAbstract implements Parcelable, Serializable {
         this.timeStamp = timeStamp;
     }
 
+    @Override
+    public String toString() {
+        return "uid=" + uid + "\n lastMsg=" + lastMsg + "\n timeStamp=" + timeStamp;
+    }
 
     protected ChatAbstract(Parcel in) {
         uid = in.readString();
@@ -44,10 +48,4 @@ public class ChatAbstract implements Parcelable, Serializable {
         dest.writeString(lastMsg);
         dest.writeString(timeStamp);
     }
-
-    @Override
-    public String toString() {
-        return "uid=" + uid + "\n lastMsg=" + lastMsg + "\n timeStamp=" + timeStamp;
-    }
-
 }

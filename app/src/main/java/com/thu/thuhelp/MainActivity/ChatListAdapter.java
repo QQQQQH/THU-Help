@@ -41,8 +41,8 @@ import okhttp3.Response;
 public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatViewHolder> {
     private App app;
     private LayoutInflater inflater;
-    private LinkedList<ChatAbstract> chatAbstractList;
     private OnItemClickListener onItemClickListener;
+    public LinkedList<ChatAbstract> chatAbstractList;
 
     public ChatListAdapter(Context context, LinkedList<ChatAbstract> chatAbstractList, App app) {
         this.app = app;

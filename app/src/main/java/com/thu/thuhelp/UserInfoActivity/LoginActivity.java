@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.thu.thuhelp.App;
+import com.thu.thuhelp.MainActivity.MainActivity;
 import com.thu.thuhelp.R;
 import com.thu.thuhelp.utils.CommonInterface;
 
@@ -29,9 +30,6 @@ import okhttp3.Callback;
 import okhttp3.Response;
 
 public class LoginActivity extends AppCompatActivity {
-    //    public static final String EXTRA_SKEY = "com.thu.thuhelp.SKEY",
-//            EXTRA_STUDENT_ID = "com.thu.thuhelp.STUDENT_ID",
-//            EXTRA_PASSWORD = "com.thu.thuhelp.PASSWORD";
     private EditText editTextSid, editTextPassword;
     private String sid, password;
 
@@ -80,17 +78,22 @@ public class LoginActivity extends AppCompatActivity {
                     JSONObject jsonObject = new JSONObject(resStr);
                     int statusCode = jsonObject.getInt("status");
                     if (statusCode == 200) {
+                        runOnUiThread(() -> Toast.makeText(LoginActivity.this, R.string.login_success, Toast.LENGTH_SHORT).show());
 
-                        // set skey
+                        JSONObject data = jsonObject.getJSONObject("data");
+                        // set skey and uid
+                        String uid = data.getString("uid");
                         App app = (App) getApplication();
-                        app.setSkey(jsonObject.getString("data"));
+                        app.setSkey(data.getString("skey"));
+                        app.setUid(uid);
+
+                        // save sid, password amd iod
                         SharedPreferences sharedPreferences = getSharedPreferences(
                                 getString(R.string.sharedPreFile_login), Context.MODE_PRIVATE);
-
-                        // save sid and password
                         SharedPreferences.Editor preferencesEditor = sharedPreferences.edit();
                         preferencesEditor.putString(getString(R.string.student_id), sid);
                         preferencesEditor.putString(getString(R.string.password), password);
+                        preferencesEditor.putString(getString(R.string.uid), uid);
                         preferencesEditor.apply();
 
                         Intent intent = new Intent();
