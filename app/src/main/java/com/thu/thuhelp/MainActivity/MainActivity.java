@@ -1,8 +1,14 @@
 package com.thu.thuhelp.MainActivity;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
 import androidx.viewpager.widget.ViewPager;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -10,6 +16,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
@@ -22,6 +30,7 @@ import com.thu.thuhelp.Service.ChatWebSocketClient;
 import com.thu.thuhelp.Service.ChatWebSocketClientService;
 import com.thu.thuhelp.utils.ChatAbstract;
 import com.thu.thuhelp.utils.CommonInterface;
+import com.thu.thuhelp.utils.Message;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
@@ -52,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
     private ChatWebSocketClientService chatWebSocketClientService;
     private ChatWebSocketClientService.ChatWebSocketClientBinder binder;
     private ChatMsgReceiver chatMsgReceiver;
+    private NotificationReceiver notificationReceiver;
 
     public LinkedList<ChatAbstract> chatList = new LinkedList<>();
 
@@ -205,6 +215,10 @@ public class MainActivity extends AppCompatActivity {
                 chatMsgReceiver = new ChatMsgReceiver();
                 IntentFilter filter = new IntentFilter(ChatWebSocketClientService.ACTION_ALL_MESSAGE);
                 registerReceiver(chatMsgReceiver, filter);
+
+                notificationReceiver = new NotificationReceiver();
+                filter = new IntentFilter(ChatWebSocketClientService.ACTION_NOT_MESSAGE);
+                registerReceiver(notificationReceiver, filter);
             }
 
             @Override
@@ -223,13 +237,50 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private class ChatMsgReceiver extends BroadcastReceiver {
+        @RequiresApi(api = Build.VERSION_CODES.O)
         @Override
         public void onReceive(Context context, Intent intent) {
-            String message = intent.getStringExtra(ChatWebSocketClientService.EXTRA_MESSAGE);
+            Message message = intent.getParcelableExtra(ChatWebSocketClientService.EXTRA_MESSAGE);
             assert message != null;
-            Log.e("Chat Receiver-Main", message);
+            Log.e("Chat Receiver-Main", message.content);
             chatListFragment.updateView();
         }
+    }
+
+    private class NotificationReceiver extends BroadcastReceiver {
+        @RequiresApi(api = Build.VERSION_CODES.O)
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String text = intent.getStringExtra(ChatWebSocketClientService.EXTRA_NOT_TEXT);
+            int type = intent.getIntExtra(ChatWebSocketClientService.EXTRA_NOT_TYPE, 1);
+            Log.e("Not Receiver-Main", text + "  " + type);
+            sendNotification(text);
+            myFragment.addBadge(type, 1);
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void sendNotification(String content) {
+        String channelId = "default";
+        String channelName = "default";
+        NotificationChannel notificationChannel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_HIGH);
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+        assert notificationManager != null;
+        notificationManager.createNotificationChannel(notificationChannel);
+        Notification notification = new NotificationCompat.Builder(this, channelId)
+                .setContentTitle("THU Help")
+                .setContentText(content)
+                .setWhen(System.currentTimeMillis())
+                .setSmallIcon(R.drawable.ic_notification)
+                .setStyle(new NotificationCompat.BigTextStyle()
+                        .bigText(content))
+                .setDefaults(NotificationCompat.DEFAULT_ALL)
+                .setPriority(NotificationCompat.PRIORITY_MAX)
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_notification))
+                .setAutoCancel(true)
+                .build();
+        notificationManager.notify(1, notification);
     }
 
     @Override
