@@ -140,7 +140,7 @@ public class DealListFragment extends Fragment {
 
         adapter.setOnItemClickListener((v, position) -> {
             clickedPosition = position;
-            Deal deal = dealList.get(position);
+            Deal deal = adapter.dealList.get(position);
             Intent intent = new Intent(activity, DealInfoActivity.class);
             intent.putExtra(EXTRA_DEAL, deal);
             intent.putExtra(EXTRA_DEAL_TYPE, dealType);

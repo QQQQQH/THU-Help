@@ -137,7 +137,7 @@ public class MainFragment extends Fragment {
 
         adapter.setOnItemClickListener((view, position) -> {
             clickedPosition = position;
-            Deal deal = dealList.get(position);
+            Deal deal = adapter.dealList.get(position);
             Intent intent = new Intent(activity, DealInfoActivity.class);
             intent.putExtra(DealListFragment.EXTRA_DEAL, deal);
             startActivityForResult(intent, REQUEST_INFO);
@@ -197,8 +197,8 @@ public class MainFragment extends Fragment {
                 updateDealList();
             } else if (requestCode == REQUEST_INFO) {
                 Toast.makeText(activity, R.string.accept_deal_success, Toast.LENGTH_SHORT).show();
-//                dealList.remove(clickedPosition);
-//                adapter.notifyDataSetChanged();
+                dealList.remove(clickedPosition);
+                adapter.notifyDataSetChanged();
                 updateDealList();
             }
         }
